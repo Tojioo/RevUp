@@ -1,0 +1,88 @@
+:root {
+    --bg: #0C1311;
+    --surface1: #112320;
+    --surface2: #1D424A;
+    --border: #17302D;
+    --text: #CBD9D7;
+    --text-dim: rgba(203, 217, 215, 0.62);
+    --accent: #00DBAC;
+    --warning: #FFB020;
+    --error: #FF5470;
+    --info: #4DA3FF;
+
+    --font-display: 'Big Shoulders Display', sans-serif;
+    --font-body: 'Manrope', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+}
+
+h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    color: var(--text);
+}
+
+button {
+    font-family: var(--font-body);
+}
+
+.content {
+    padding: 24px;
+}
+
+.validation-message {
+    color: var(--error);
+    font-size: 13px;
+}
+
+.blazor-error-boundary {
+    background: var(--error);
+    padding: 1rem 1rem 1rem 1.5rem;
+    color: var(--bg);
+    border-radius: 8px;
+}
+
+.blazor-error-boundary::after {
+    content: "An error has occurred.";
+}
+
+#blazor-error-ui {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    color: var(--text);
+    bottom: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    display: none;
+    left: 0;
+    padding: 0.8rem 1.2rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.8rem;
+    top: 0.5rem;
+}

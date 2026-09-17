@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>RevUp Prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --page-bg:#05080A;
+    --bg:#0C1311;--surface1:#112320;--surface2:#1D424A;--border:#17302D;
+    --text:#CBD9D7;--text-dim:rgba(203,217,215,0.62);
+    --accent:#00DBAC;--warning:#FFB020;--error:#FF5470;--info:#4DA3FF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page-bg);
+    color:var(--text);
+    font-family:'Manrope',system-ui,sans-serif;
+    padding:40px 24px 80px;
+  }
+  h1.page-title{
+    font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:22px;
+    letter-spacing:0.02em;text-transform:uppercase;margin:0 0 6px;color:var(--text);
+  }
+  p.page-sub{color:var(--text-dim);font-size:13px;margin:0 0 32px;max-width:60ch;}
+
+  .screens{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start;}
+  .screen-block{width:390px;}
+  .screen-label{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--text-dim);margin:0 0 10px;
+  }
+  .frame{
+    width:390px;height:844px;background:var(--bg);color:var(--text);
+    display:flex;flex-direction:column;overflow:hidden;border-radius:20px;
+    border:1px solid var(--border);
+  }
+  .topbar{display:flex;align-items:center;gap:8px;padding:20px 20px 8px;}
+  .brand-name{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.04em;text-transform:uppercase;color:var(--text);}
+  .scroll{flex:1;overflow-y:auto;padding:4px 20px 20px;scrollbar-width:none;-ms-overflow-style:none;}
+  .scroll::-webkit-scrollbar{display:none;}
+  .large-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:34px;line-height:1;text-transform:uppercase;letter-spacing:0.01em;margin:6px 0 16px;color:var(--text);}
+
+  /* Entdecken */
+  .chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none;-ms-overflow-style:none;}
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none;border:1px solid var(--border);background:var(--surface1);color:var(--text-dim);
+    font-family:'Manrope',sans-serif;font-weight:600;font-size:13px;padding:0 16px;height:44px;
+    display:flex;align-items:center;border-radius:999px;cursor:pointer;
+  }
+  .chip.active{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+  .card-list{display:flex;flex-direction:column;gap:12px;}
+  .meet-card{background:var(--surface1);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .badge-row{display:flex;gap:6px;}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;}
+  .badge-public{background:rgba(77,163,255,0.16);color:var(--info);}
+  .badge-private{background:rgba(255,176,32,0.14);color:var(--warning);}
+  .badge-theme{background:var(--surface2);color:var(--text-dim);}
+  .meet-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:17px;margin:0;color:var(--text);}
+  .meta-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);}
+  .meta-item svg{width:14px;height:14px;flex:none;}
+  .meet-foot{display:flex;align-items:center;justify-content:space-between;margin-top:2px;}
+  .chev{color:var(--text-dim);display:flex;}
+  .chev svg{width:18px;height:18px;}
+  .empty-state{padding:32px 8px;text-align:center;color:var(--text-dim);font-size:13px;display:none;}
+
+  .tabbar{display:flex;border-top:1px solid var(--border);background:var(--surface1);padding:10px 8px 24px;}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-dim);font-family:'Manrope',sans-serif;font-size:10px;font-weight:600;}
+  .tab svg{width:22px;height:22px;}
+  .tab.active{color:var(--accent);}
+
+  /* Erstellen */
+  .form-scroll{display:flex;flex-direction:column;gap:22px;}
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin:0 0 8px 2px;}
+  .field-group{background:var(--surface1);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .field-row{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border);}
+  .field-row:last-child{border-bottom:none;}
+  .field-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);}
+  .field-value{font-family:'Manrope',sans-serif;font-size:15px;color:var(--text);}
+  .segmented{display:flex;background:var(--surface2);border-radius:10px;padding:3px;gap:2px;}
+  .segment{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 4px;border-radius:8px;font-family:'Manrope',sans-serif;font-weight:700;font-size:12px;color:var(--text-dim);cursor:pointer;}
+  .segment.active{background:var(--accent);color:var(--bg);}
+  .stepper-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface1);border:1px solid var(--border);border-radius:14px;}
+  .stepper{display:flex;align-items:center;gap:12px;}
+  .stepper-btn{width:44px;height:44px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text);border:none;cursor:pointer;}
+  .stepper-btn svg{width:18px;height:18px;}
+  .stepper-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;min-width:34px;text-align:center;}
+  .btn-primary{display:flex;align-items:center;justify-content:center;background:var(--accent);color:var(--bg);font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;height:52px;border-radius:14px;border:none;width:100%;cursor:pointer;}
+  .btn-primary:disabled{background:var(--surface2);color:var(--text-dim);cursor:default;}
+
+  /* Detail */
+  .example-switch{display:flex;gap:8px;margin-bottom:10px;}
+  .example-switch button{
+    flex:1;border:1px solid var(--border);background:var(--surface1);color:var(--text-dim);
+    font-family:'Manrope',sans-serif;font-weight:600;font-size:12px;padding:8px;border-radius:10px;cursor:pointer;
+  }
+  .example-switch button.active{background:var(--surface2);color:var(--text);border-color:var(--surface2);}
+  .subheader{display:flex;align-items:center;gap:10px;padding:20px 20px 4px;}
+  .back-btn{width:44px;height:44px;border-radius:12px;background:var(--surface1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text);flex:none;}
+  .back-btn svg{width:18px;height:18px;}
+  .subheader-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;color:var(--text-dim);}
+  .hero-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:26px;text-transform:uppercase;line-height:1.08;margin:0 0 14px;color:var(--text);}
+  .status-pill{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 10px;border-radius:8px;margin-bottom:14px;}
+  .status-pill svg{width:14px;height:14px;}
+  .status-warning{background:rgba(255,176,32,0.14);color:var(--warning);}
+  .status-info{background:rgba(77,163,255,0.16);color:var(--info);}
+  .status-success{background:rgba(0,219,172,0.14);color:var(--accent);}
+  .map-box{
+    height:180px;border-radius:16px;
+    background:
+      repeating-linear-gradient(0deg,var(--surface2) 0 1px,transparent 1px 28px),
+      repeating-linear-gradient(90deg,var(--surface2) 0 1px,transparent 1px 28px),
+      var(--surface1);
+    border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);margin-bottom:18px;
+  }
+  .map-box svg{width:32px;height:32px;}
+  .detail-meta-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;}
+  .detail-meta-row{display:flex;align-items:center;gap:10px;}
+  .detail-meta-row svg{width:18px;height:18px;color:var(--text-dim);flex:none;}
+  .detail-meta-text{font-size:14px;color:var(--text);}
+  .detail-meta-text b{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+
+  /* Meine Meets */
+  .owner-list{display:flex;flex-direction:column;gap:14px;}
+  .owner-card{background:var(--surface1);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+  .owner-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .owner-title-wrap{display:flex;flex-direction:column;gap:4px;}
+  .owner-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;color:var(--text);}
+  .owner-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);}
+  .pending-badge{background:var(--warning);color:var(--bg);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;flex:none;}
+  .request-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--border);}
+  .requester{display:flex;align-items:center;gap:10px;}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;color:var(--text);flex:none;}
+  .requester-name{font-size:13px;font-weight:600;color:var(--text);}
+  .request-actions{display:flex;gap:6px;}
+  .icon-btn{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;}
+  .icon-btn svg{width:18px;height:18px;}
+  .icon-btn.accept{background:rgba(0,219,172,0.14);color:var(--accent);}
+  .icon-btn.reject{background:rgba(255,84,112,0.14);color:var(--error);}
+  .result-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;}
+  .result-accept{background:rgba(0,219,172,0.14);color:var(--accent);}
+  .result-reject{background:rgba(255,84,112,0.14);color:var(--error);}
+  .no-requests{font-size:12px;color:var(--text-dim);padding-top:2px;}
+</style>
+</head>
+<body>
+
+<h1 class="page-title">RevUp Prototyp</h1>
+<p class="page-sub">Klickbarer Prototyp, rein lokal (kein claude.ai, keine geteilte Live-Version). Direkt in dieser Datei per Vanilla-JS, Quelle: <code>prototype.html</code>.</p>
+
+<div class="screens">
+
+  <!-- ENTDECKEN -->
+  <div class="screen-block">
+    <p class="screen-label">Entdecken</p>
+    <div class="frame">
+      <div class="topbar">
+        <svg width="28" height="28" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="26" fill="#112320"></rect>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"></path>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"></line>
+          <circle cx="50" cy="50" r="6" fill="#CBD9D7"></circle>
+        </svg>
+        <span class="brand-name">RevUp</span>
+      </div>
+
+      <div class="scroll">
+        <h1 class="large-title">Entdecken</h1>
+
+        <div class="chip-row" id="chipRow">
+          <div class="chip active" data-theme="Alle">Alle</div>
+          <div class="chip" data-theme="90s Cars">90s Cars</div>
+          <div class="chip" data-theme="Tuning">Tuning</div>
+          <div class="chip" data-theme="Motorräder">Motorräder</div>
+          <div class="chip" data-theme="Green">Green</div>
+        </div>
+
+        <div class="card-list" id="cardList">
+          <article class="meet-card" data-theme="Tuning">
+            <div class="badge-row">
+              <span class="badge badge-public">Öffentlich</span>
+              <span class="badge badge-theme">Tuning</span>
+            </div>
+            <h2 class="meet-title">Sonntagsausfahrt Tuning-Treff</h2>
+            <div class="meta-row">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3.3 1.9"></path></svg>
+                Sa, 18:00
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>
+                Ort nach Beitritt
+              </span>
+            </div>
+            <div class="meet-foot">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="10" r="3.2"></circle><path d="M2.5 20c0-3.3 2.7-5.7 6-5.7s6 2.4 6 5.7"></path><path d="M15.2 5.3a3.2 3.2 0 0 1 0 6.2"></path><path d="M16.5 14.4c2.3.5 4 2.6 4 5.6"></path></svg>
+                12/30
+              </span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></span>
+            </div>
+          </article>
+
+          <article class="meet-card" data-theme="90s Cars">
+            <div class="badge-row">
+              <span class="badge badge-private">Privat</span>
+              <span class="badge badge-theme">90s Cars</span>
+            </div>
+            <h2 class="meet-title">90er Treffen Parkhaus Nord</h2>
+            <div class="meta-row">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3.3 1.9"></path></svg>
+                Open Start 18:00
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>
+                Ort nach Freigabe
+              </span>
+            </div>
+            <div class="meet-foot">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="10" r="3.2"></circle><path d="M2.5 20c0-3.3 2.7-5.7 6-5.7s6 2.4 6 5.7"></path><path d="M15.2 5.3a3.2 3.2 0 0 1 0 6.2"></path><path d="M16.5 14.4c2.3.5 4 2.6 4 5.6"></path></svg>
+                18/25
+              </span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></span>
+            </div>
+          </article>
+
+          <article class="meet-card" data-theme="Green">
+            <div class="badge-row">
+              <span class="badge badge-public">Öffentlich</span>
+              <span class="badge badge-theme">Green</span>
+            </div>
+            <h2 class="meet-title">EV & Hybrid Stammtisch</h2>
+            <div class="meta-row">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3.3 1.9"></path></svg>
+                So, 14:00
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>
+                Ort nach Beitritt
+              </span>
+            </div>
+            <div class="meet-foot">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="10" r="3.2"></circle><path d="M2.5 20c0-3.3 2.7-5.7 6-5.7s6 2.4 6 5.7"></path><path d="M15.2 5.3a3.2 3.2 0 0 1 0 6.2"></path><path d="M16.5 14.4c2.3.5 4 2.6 4 5.6"></path></svg>
+                6/20
+              </span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></span>
+            </div>
+          </article>
+        </div>
+
+        <p class="empty-state" id="emptyState">Keine Meets zu diesem Thema.</p>
+      </div>
+
+      <nav class="tabbar">
+        <div class="tab active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M15.2 8.8l-2 4.4-4.4 2 2-4.4 4.4-2z"></path></svg>
+          Entdecken
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+          Erstellen
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.1 17.8A8.6 8.6 0 1 1 17.9 17.8"></path><path d="M12 12l4.4-4.4"></path><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"></circle></svg>
+          Meine Meets
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a5 5 0 0 0-5 5v3.2L5.3 15h13.4L17 11.7V8.5a5 5 0 0 0-5-5z"></path><path d="M9.7 18a2.4 2.4 0 0 0 4.6 0"></path></svg>
+          Anfragen
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ERSTELLEN -->
+  <div class="screen-block">
+    <p class="screen-label">Erstellen</p>
+    <div class="frame">
+      <div class="topbar">
+        <svg width="28" height="28" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="26" fill="#112320"></rect>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"></path>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"></line>
+          <circle cx="50" cy="50" r="6" fill="#CBD9D7"></circle>
+        </svg>
+        <span class="brand-name">RevUp</span>
+      </div>
+
+      <div class="scroll form-scroll">
+        <h1 class="large-title">Neues Meet</h1>
+
+        <div>
+          <p class="section-label">Angaben</p>
+          <div class="field-group">
+            <div class="field-row"><span class="field-label">Titel</span><span class="field-value">Sonntagsausfahrt Tuning-Treff</span></div>
+            <div class="field-row"><span class="field-label">Thema</span><span class="field-value">Tuning</span></div>
+            <div class="field-row"><span class="field-label">Ort</span><span class="field-value">Parkplatz Industriestrasse</span></div>
+          </div>
+        </div>
+
+        <div>
+          <p class="section-label">Zeitmodus</p>
+          <div class="segmented" id="timeModeSeg">
+            <div class="segment active" data-value="fixed">Fixed</div>
+            <div class="segment" data-value="open-start">Open Start</div>
+            <div class="segment" data-value="open-end">Open End</div>
+          </div>
+        </div>
+
+        <div>
+          <p class="section-label">Limits</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="stepper-row">
+              <span class="field-value">Max. Teilnehmer</span>
+              <div class="stepper">
+                <button class="stepper-btn" type="button" data-stepper="participants" data-delta="-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
+                </button>
+                <span class="stepper-val" id="participantsVal">30</span>
+                <button class="stepper-btn" type="button" data-stepper="participants" data-delta="1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <span class="field-value">Max. Lautstärke (dB)</span>
+              <div class="stepper">
+                <button class="stepper-btn" type="button" data-stepper="volume" data-delta="-5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
+                </button>
+                <span class="stepper-val" id="volumeVal">85</span>
+                <button class="stepper-btn" type="button" data-stepper="volume" data-delta="5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="section-label">Sichtbarkeit</p>
+          <div class="segmented" id="visibilitySeg">
+            <div class="segment active" data-value="public">Öffentlich</div>
+            <div class="segment" data-value="private">Privat</div>
+          </div>
+        </div>
+
+        <div style="flex:1;"></div>
+        <button class="btn-primary" type="button">Meet erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="screen-block">
+    <p class="screen-label">Meet-Detail</p>
+    <div class="frame">
+      <div class="subheader">
+        <div class="back-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+        </div>
+        <span class="subheader-title">Entdecken</span>
+      </div>
+
+      <div class="scroll">
+        <div class="example-switch" id="detailExampleSwitch">
+          <button data-visibility="private" class="active">Beispiel: Privat</button>
+          <button data-visibility="public">Beispiel: Öffentlich</button>
+        </div>
+
+        <div class="badge-row">
+          <span class="badge badge-private" id="detailVisBadge">Privat</span>
+          <span class="badge badge-theme" id="detailTheme">90s Cars</span>
+        </div>
+
+        <h1 class="hero-title" id="detailTitle">90er Treffen Parkhaus Nord</h1>
+
+        <div class="status-pill status-warning" id="detailStatusPill">
+          <svg id="detailIconLock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.5"></rect><path d="M8 11V7.5a4 4 0 0 1 8 0V11"></path></svg>
+          <svg id="detailIconClock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3.3 1.9"></path></svg>
+          <svg id="detailIconPin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>
+          <span id="detailStatusLabel">Standort verborgen bis Freigabe</span>
+        </div>
+
+        <div class="map-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>
+        </div>
+
+        <div class="detail-meta-list">
+          <div class="detail-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5l3.3 1.9"></path></svg>
+            <span class="detail-meta-text" id="detailTime">Open Start, ab 18:00</span>
+          </div>
+          <div class="detail-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="10" r="3.2"></circle><path d="M2.5 20c0-3.3 2.7-5.7 6-5.7s6 2.4 6 5.7"></path><path d="M15.2 5.3a3.2 3.2 0 0 1 0 6.2"></path><path d="M16.5 14.4c2.3.5 4 2.6 4 5.6"></path></svg>
+            <span class="detail-meta-text" id="detailCount">18 / 25 Plätze belegt</span>
+          </div>
+          <div class="detail-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2"></path><circle cx="12" cy="7" r="3.2"></circle></svg>
+            <span class="detail-meta-text">Veranstaltet von <b id="detailOrganizer">Livio</b></span>
+          </div>
+        </div>
+
+        <button class="btn-primary" type="button" id="detailActionBtn">Anfrage stellen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEINE MEETS -->
+  <div class="screen-block">
+    <p class="screen-label">Meine Meets</p>
+    <div class="frame">
+      <div class="topbar">
+        <svg width="28" height="28" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="26" fill="#112320"></rect>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"></path>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"></line>
+          <circle cx="50" cy="50" r="6" fill="#CBD9D7"></circle>
+        </svg>
+        <span class="brand-name">RevUp</span>
+      </div>
+
+      <div class="scroll">
+        <h1 class="large-title">Meine Meets</h1>
+
+        <div class="owner-list">
+          <article class="owner-card">
+            <div class="owner-card-head">
+              <div class="owner-title-wrap">
+                <span class="owner-title">90er Treffen Parkhaus Nord</span>
+                <span class="owner-sub">Privat · 18/25 Plätze</span>
+              </div>
+              <span class="pending-badge" id="pendingBadge">2 offen</span>
+            </div>
+
+            <div class="request-row" data-request="aylin">
+              <div class="requester">
+                <div class="avatar">A</div>
+                <span class="requester-name">Aylin</span>
+              </div>
+              <div class="request-actions">
+                <button class="icon-btn accept" type="button" data-action="accept">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"></path></svg>
+                </button>
+                <button class="icon-btn reject" type="button" data-action="reject">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="request-row" data-request="marco">
+              <div class="requester">
+                <div class="avatar">M</div>
+                <span class="requester-name">Marco</span>
+              </div>
+              <div class="request-actions">
+                <button class="icon-btn accept" type="button" data-action="accept">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"></path></svg>
+                </button>
+                <button class="icon-btn reject" type="button" data-action="reject">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="owner-card">
+            <div class="owner-card-head">
+              <div class="owner-title-wrap">
+                <span class="owner-title">Feierabend-Cruise</span>
+                <span class="owner-sub">Öffentlich · 9/15 Plätze</span>
+              </div>
+            </div>
+            <p class="no-requests">Keine offenen Anfragen.</p>
+          </article>
+        </div>
+      </div>
+
+      <nav class="tabbar">
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M15.2 8.8l-2 4.4-4.4 2 2-4.4 4.4-2z"></path></svg>
+          Entdecken
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+          Erstellen
+        </div>
+        <div class="tab active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.1 17.8A8.6 8.6 0 1 1 17.9 17.8"></path><path d="M12 12l4.4-4.4"></path><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"></circle></svg>
+          Meine Meets
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a5 5 0 0 0-5 5v3.2L5.3 15h13.4L17 11.7V8.5a5 5 0 0 0-5-5z"></path><path d="M9.7 18a2.4 2.4 0 0 0 4.6 0"></path></svg>
+          Anfragen
+        </div>
+      </nav>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // --- Entdecken: Themen-Filter ---
+  var chipRow = document.getElementById('chipRow');
+  var cardList = document.getElementById('cardList');
+  var emptyState = document.getElementById('emptyState');
+
+  chipRow.addEventListener('click', function(e){
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    chipRow.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+    chip.classList.add('active');
+    var theme = chip.getAttribute('data-theme');
+    var visibleCount = 0;
+    cardList.querySelectorAll('.meet-card').forEach(function(card){
+      var match = theme === 'Alle' || card.getAttribute('data-theme') === theme;
+      card.style.display = match ? '' : 'none';
+      if (match) visibleCount++;
+    });
+    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+  });
+
+  // --- Erstellen: Segmented Controls + Stepper ---
+  document.querySelectorAll('.segmented').forEach(function(seg){
+    seg.addEventListener('click', function(e){
+      var opt = e.target.closest('.segment');
+      if (!opt) return;
+      seg.querySelectorAll('.segment').forEach(function(s){ s.classList.remove('active'); });
+      opt.classList.add('active');
+    });
+  });
+
+  var stepperState = { participants: 30, volume: 85 };
+  var stepperBounds = {
+    participants: { min: 2, max: 200 },
+    volume: { min: 50, max: 120 },
+  };
+  document.querySelectorAll('[data-stepper]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var field = btn.getAttribute('data-stepper');
+      var delta = parseInt(btn.getAttribute('data-delta'), 10);
+      var bounds = stepperBounds[field];
+      var next = Math.min(bounds.max, Math.max(bounds.min, stepperState[field] + delta));
+      stepperState[field] = next;
+      document.getElementById(field === 'participants' ? 'participantsVal' : 'volumeVal').textContent = next;
+    });
+  });
+
+  // --- Detail: Beispiel-Umschalter + Beitreten/Anfrage stellen ---
+  var detailData = {
+    private: {
+      visBadgeClass: 'badge badge-private', visLabel: 'Privat',
+      theme: '90s Cars', title: '90er Treffen Parkhaus Nord',
+      time: 'Open Start, ab 18:00', count: '18 / 25 Plätze belegt', organizer: 'Livio',
+      idleLabel: 'Standort verborgen bis Freigabe', idleIcon: 'lock',
+      doneLabel: 'Anfrage gesendet, wartet auf Bestätigung', doneIcon: 'clock', doneClass: 'status-info',
+      btnIdle: 'Anfrage stellen', btnDone: 'Anfrage gesendet',
+    },
+    public: {
+      visBadgeClass: 'badge badge-public', visLabel: 'Öffentlich',
+      theme: 'Green', title: 'Feierabend-Cruise',
+      time: 'So, 14:00', count: '9 / 15 Plätze belegt', organizer: 'Aylin',
+      idleLabel: 'Standort verborgen bis Beitritt', idleIcon: 'lock',
+      doneLabel: 'Standort sichtbar', doneIcon: 'pin', doneClass: 'status-success',
+      btnIdle: 'Beitreten', btnDone: 'Beigetreten',
+    },
+  };
+  var detailState = { visibility: 'private', done: false };
+
+  function renderDetail(){
+    var d = detailData[detailState.visibility];
+    document.getElementById('detailVisBadge').className = d.visBadgeClass;
+    document.getElementById('detailVisBadge').textContent = d.visLabel;
+    document.getElementById('detailTheme').textContent = d.theme;
+    document.getElementById('detailTitle').textContent = d.title;
+    document.getElementById('detailTime').textContent = d.time;
+    document.getElementById('detailCount').textContent = d.count;
+    document.getElementById('detailOrganizer').textContent = d.organizer;
+
+    var pill = document.getElementById('detailStatusPill');
+    var label = document.getElementById('detailStatusLabel');
+    var iconLock = document.getElementById('detailIconLock');
+    var iconClock = document.getElementById('detailIconClock');
+    var iconPin = document.getElementById('detailIconPin');
+    var btn = document.getElementById('detailActionBtn');
+
+    iconLock.style.display = 'none';
+    iconClock.style.display = 'none';
+    iconPin.style.display = 'none';
+
+    if (!detailState.done) {
+      pill.className = 'status-pill status-warning';
+      label.textContent = d.idleLabel;
+      iconLock.style.display = '';
+      btn.textContent = d.btnIdle;
+      btn.disabled = false;
+    } else {
+      pill.className = 'status-pill ' + d.doneClass;
+      label.textContent = d.doneLabel;
+      (d.doneIcon === 'clock' ? iconClock : iconPin).style.display = '';
+      btn.textContent = d.btnDone;
+      btn.disabled = true;
+    }
+  }
+
+  document.getElementById('detailExampleSwitch').addEventListener('click', function(e){
+    var opt = e.target.closest('button');
+    if (!opt) return;
+    this.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+    opt.classList.add('active');
+    detailState.visibility = opt.getAttribute('data-visibility');
+    detailState.done = false;
+    renderDetail();
+  });
+
+  document.getElementById('detailActionBtn').addEventListener('click', function(){
+    if (detailState.done) return;
+    detailState.done = true;
+    renderDetail();
+  });
+
+  renderDetail();
+
+  // --- Meine Meets: Annehmen/Ablehnen ---
+  var requestStatus = { aylin: 'pending', marco: 'pending' };
+
+  function updatePendingBadge(){
+    var pending = Object.keys(requestStatus).filter(function(k){ return requestStatus[k] === 'pending'; }).length;
+    var badge = document.getElementById('pendingBadge');
+    if (pending > 0) {
+      badge.style.display = '';
+      badge.textContent = pending + ' offen';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  document.querySelectorAll('.request-row').forEach(function(row){
+    row.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var id = row.getAttribute('data-request');
+      var decision = btn.getAttribute('data-action') === 'accept' ? 'accepted' : 'rejected';
+      requestStatus[id] = decision;
+
+      var actions = row.querySelector('.request-actions');
+      var tag = document.createElement('span');
+      tag.className = decision === 'accepted' ? 'result-tag result-accept' : 'result-tag result-reject';
+      tag.textContent = decision === 'accepted' ? 'Angenommen' : 'Abgelehnt';
+      actions.replaceWith(tag);
+
+      updatePendingBadge();
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

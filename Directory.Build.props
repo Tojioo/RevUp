@@ -1,0 +1,15 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- Enables the latest .NET code analysis features -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Automatically installs StyleCop to all projects in the solution -->
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" />
+  
+    <!-- Links the single stylecop.json file from the solution root to all projects -->
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+</Project>

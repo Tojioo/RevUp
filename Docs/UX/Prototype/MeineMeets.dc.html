@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+  <style>
+    :root{
+      --bg:#0C1311;--surface1:#112320;--surface2:#1D424A;--border:#17302D;
+      --text:#CBD9D7;--text-dim:rgba(203,217,215,0.62);
+      --accent:#00DBAC;--warning:#FFB020;--error:#FF5470;--info:#4DA3FF;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    .frame{width:390px;height:844px;background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{display:flex;align-items:center;gap:8px;padding:20px 20px 8px;}
+    .brand-name{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.04em;text-transform:uppercase;color:var(--text);}
+    .scroll{flex:1;overflow-y:auto;padding:4px 20px 20px;scrollbar-width:none;-ms-overflow-style:none;}
+    .scroll::-webkit-scrollbar{display:none;}
+    .large-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:34px;line-height:1;text-transform:uppercase;letter-spacing:0.01em;margin:6px 0 16px;color:var(--text);}
+
+    .owner-list{display:flex;flex-direction:column;gap:14px;}
+    .owner-card{background:var(--surface1);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+    .owner-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .owner-title-wrap{display:flex;flex-direction:column;gap:4px;}
+    .owner-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;color:var(--text);}
+    .owner-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);}
+    .pending-badge{background:var(--warning);color:var(--bg);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;flex:none;}
+
+    .request-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--border);}
+    .requester{display:flex;align-items:center;gap:10px;}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;color:var(--text);flex:none;}
+    .requester-name{font-size:13px;font-weight:600;color:var(--text);}
+    .request-actions{display:flex;gap:6px;}
+    .icon-btn{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;border:none;}
+    .icon-btn svg{width:18px;height:18px;}
+    .icon-btn.accept{background:rgba(0,219,172,0.14);color:var(--accent);}
+    .icon-btn.reject{background:rgba(255,84,112,0.14);color:var(--error);}
+
+    .result-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;}
+    .result-accept{background:rgba(0,219,172,0.14);color:var(--accent);}
+    .result-reject{background:rgba(255,84,112,0.14);color:var(--error);}
+
+    .no-requests{font-size:12px;color:var(--text-dim);padding-top:2px;}
+
+    .tabbar{display:flex;border-top:1px solid var(--border);background:var(--surface1);padding:10px 8px 24px;}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-dim);font-family:'Manrope',sans-serif;font-size:10px;font-weight:600;}
+    .tab svg{width:22px;height:22px;}
+    .tab.active{color:var(--accent);}
+  </style>
+</helmet>
+
+<div class="frame">
+  <div class="topbar">
+    <svg width="28" height="28" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="26" fill="#112320"></rect>
+      <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"></path>
+      <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"></line>
+      <circle cx="50" cy="50" r="6" fill="#CBD9D7"></circle>
+    </svg>
+    <span class="brand-name">RevUp</span>
+  </div>
+
+  <div class="scroll">
+    <h1 class="large-title">Meine Meets</h1>
+
+    <div class="owner-list">
+
+      <article class="owner-card">
+        <div class="owner-card-head">
+          <div class="owner-title-wrap">
+            <span class="owner-title">90er Treffen Parkhaus Nord</span>
+            <span class="owner-sub">Privat · 18/25 Plätze</span>
+          </div>
+          <sc-if value="{{hasPending}}" hint-placeholder-val="{{true}}">
+            <span class="pending-badge">{{pendingLabel}}</span>
+          </sc-if>
+        </div>
+
+        <sc-for list="{{requests}}" as="r" hint-placeholder-count="2">
+          <div class="request-row">
+            <div class="requester">
+              <div class="avatar">{{r.initial}}</div>
+              <span class="requester-name">{{r.name}}</span>
+            </div>
+
+            <sc-if value="{{r.isPending}}" hint-placeholder-val="{{true}}">
+              <div class="request-actions">
+                <button class="icon-btn accept" type="button" onClick="{{r.accept}}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"></path></svg>
+                </button>
+                <button class="icon-btn reject" type="button" onClick="{{r.reject}}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{r.isDecided}}" hint-placeholder-val="{{false}}">
+              <span class="{{r.resultClass}}">{{r.resultLabel}}</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </article>
+
+      <article class="owner-card">
+        <div class="owner-card-head">
+          <div class="owner-title-wrap">
+            <span class="owner-title">Feierabend-Cruise</span>
+            <span class="owner-sub">Öffentlich · 9/15 Plätze</span>
+          </div>
+        </div>
+        <p class="no-requests">Keine offenen Anfragen.</p>
+      </article>
+
+    </div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M15.2 8.8l-2 4.4-4.4 2 2-4.4 4.4-2z"></path></svg>
+      Entdecken
+    </div>
+    <div class="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+      Erstellen
+    </div>
+    <div class="tab active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.1 17.8A8.6 8.6 0 1 1 17.9 17.8"></path><path d="M12 12l4.4-4.4"></path><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"></circle></svg>
+      Meine Meets
+    </div>
+    <div class="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a5 5 0 0 0-5 5v3.2L5.3 15h13.4L17 11.7V8.5a5 5 0 0 0-5-5z"></path><path d="M9.7 18a2.4 2.4 0 0 0 4.6 0"></path></svg>
+      Anfragen
+    </div>
+  </nav>
+</div>
+</x-dc>
+
+<script data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { statuses: { aylin: 'pending', marco: 'pending' } };
+  }
+
+  decide(id, decision) {
+    this.setState({ statuses: { ...this.state.statuses, [id]: decision } });
+  }
+
+  renderVals() {
+    const requestDefs = [
+      { id: 'aylin', name: 'Aylin', initial: 'A' },
+      { id: 'marco', name: 'Marco', initial: 'M' },
+    ];
+
+    const requests = requestDefs.map((r) => {
+      const status = this.state.statuses[r.id];
+      return {
+        ...r,
+        isPending: status === 'pending',
+        isDecided: status !== 'pending',
+        resultLabel: status === 'accepted' ? 'Angenommen' : (status === 'rejected' ? 'Abgelehnt' : ''),
+        resultClass: status === 'accepted' ? 'result-tag result-accept' : 'result-tag result-reject',
+        accept: () => this.decide(r.id, 'accepted'),
+        reject: () => this.decide(r.id, 'rejected'),
+      };
+    });
+
+    const pendingCount = requests.filter((r) => r.isPending).length;
+
+    return {
+      requests,
+      hasPending: pendingCount > 0,
+      pendingLabel: pendingCount + ' offen',
+    };
+  }
+}
+</script>
+</body>
+</html>

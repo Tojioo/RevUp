@@ -1,0 +1,86 @@
+@page "/"
+@page "/meets"
+@rendermode InteractiveServer
+@inject IMeetService MeetService
+
+<PageTitle>Entdecken – RevUp</PageTitle>
+
+<h1 class="page-title">Entdecken</h1>
+
+<div class="chip-row">
+    @foreach (var theme in _themes)
+    {
+        <button type="button"
+                class="chip @(theme == _selectedTheme ? "active" : "")"
+                @onclick="() => SelectTheme(theme)">
+            @theme
+        </button>
+    }
+</div>
+
+@if (_filteredMeets.Count == 0)
+{
+    <p class="empty-state">Keine Meets zu diesem Thema.</p>
+}
+else
+{
+    <div class="card-list">
+        @foreach (var meet in _filteredMeets)
+        {
+            <article class="meet-card" @key="meet.Id">
+                <div class="badge-row">
+                    <span class="badge @(meet.IsPublic ? "badge-public" : "badge-private")">
+                        @(meet.IsPublic ? "Öffentlich" : "Privat")
+                    </span>
+                    <span class="badge badge-theme">@meet.Theme</span>
+                </div>
+
+                <h2 class="meet-title">@meet.Title</h2>
+
+                <div class="meta-row">
+                    <span class="meta-item">@FormatTime(meet)</span>
+                    <span class="meta-item">@(meet.IsPublic ? "Ort nach Beitritt" : "Ort nach Freigabe")</span>
+                </div>
+
+                <div class="meet-foot">
+                    <span class="meta-item"><i class="fa-solid fa-users" aria-hidden="true"></i> @meet.AttendeeCount/@meet.MaxAttendees</span>
+                </div>
+            </article>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<Meet> _meets = [];
+    private List<string> _themes = [];
+    private string _selectedTheme = "Alle";
+    private List<Meet> _filteredMeets = [];
+
+    protected override void OnInitialized()
+    {
+        _meets = MeetService.GetMeets();
+        _themes = ["Alle", .. _meets.Select(m => m.Theme).Distinct().OrderBy(t => t)];
+        ApplyFilter();
+    }
+
+    private void SelectTheme(string theme)
+    {
+        _selectedTheme = theme;
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        _filteredMeets = _selectedTheme == "Alle"
+            ? _meets.ToList()
+            : _meets.Where(m => m.Theme == _selectedTheme).ToList();
+    }
+
+    private static string FormatTime(Meet meet) => meet.TimeMode switch
+    {
+        TimeMode.Fixed => meet.StartTime.ToString("ddd, HH:mm"),
+        TimeMode.OpenStart => $"Open Start {meet.StartTime:HH:mm}",
+        TimeMode.OpenEnd => $"ab {meet.StartTime:HH:mm}, Open End",
+        _ => meet.StartTime.ToString("g"),
+    };
+}

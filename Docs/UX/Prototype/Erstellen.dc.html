@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+  <style>
+    :root{
+      --bg:#0C1311;--surface1:#112320;--surface2:#1D424A;--border:#17302D;
+      --text:#CBD9D7;--text-dim:rgba(203,217,215,0.62);
+      --accent:#00DBAC;--warning:#FFB020;--error:#FF5470;--info:#4DA3FF;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    .frame{width:390px;height:844px;background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{display:flex;align-items:center;gap:8px;padding:20px 20px 8px;}
+    .brand-name{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.04em;text-transform:uppercase;color:var(--text);}
+    .scroll{flex:1;overflow-y:auto;padding:4px 20px 20px;display:flex;flex-direction:column;gap:22px;scrollbar-width:none;-ms-overflow-style:none;}
+    .scroll::-webkit-scrollbar{display:none;}
+    .large-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:34px;line-height:1;text-transform:uppercase;letter-spacing:0.01em;margin:6px 0 0;color:var(--text);}
+
+    .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin:0 0 8px 2px;}
+
+    .field-group{background:var(--surface1);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .field-row{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border);}
+    .field-row:last-child{border-bottom:none;}
+    .field-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);}
+    .field-value{font-family:'Manrope',sans-serif;font-size:15px;color:var(--text);}
+
+    .segmented{display:flex;background:var(--surface2);border-radius:10px;padding:3px;gap:2px;}
+    .segment{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 4px;border-radius:8px;font-family:'Manrope',sans-serif;font-weight:700;font-size:12px;color:var(--text-dim);}
+    .segment.active{background:var(--accent);color:var(--bg);}
+
+    .stepper-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface1);border:1px solid var(--border);border-radius:14px;}
+    .stepper{display:flex;align-items:center;gap:12px;}
+    .stepper-btn{width:44px;height:44px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text);border:none;}
+    .stepper-btn svg{width:18px;height:18px;}
+    .stepper-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;min-width:34px;text-align:center;}
+
+    .btn-primary{display:flex;align-items:center;justify-content:center;background:var(--accent);color:var(--bg);font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;height:52px;border-radius:14px;border:none;width:100%;}
+  </style>
+</helmet>
+
+<div class="frame">
+  <div class="topbar">
+    <svg width="28" height="28" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="26" fill="#112320"></rect>
+      <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"></path>
+      <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"></line>
+      <circle cx="50" cy="50" r="6" fill="#CBD9D7"></circle>
+    </svg>
+    <span class="brand-name">RevUp</span>
+  </div>
+
+  <div class="scroll">
+    <h1 class="large-title">Neues Meet</h1>
+
+    <div>
+      <p class="section-label">Angaben</p>
+      <div class="field-group">
+        <div class="field-row">
+          <span class="field-label">Titel</span>
+          <span class="field-value">Sonntagsausfahrt Tuning-Treff</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Thema</span>
+          <span class="field-value">Tuning</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Ort</span>
+          <span class="field-value">Parkplatz Industriestrasse</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">Zeitmodus</p>
+      <div class="segmented">
+        <sc-for list="{{timeModes}}" as="m" hint-placeholder-count="3">
+          <div class="{{m.segClass}}" onClick="{{m.pick}}">{{m.label}}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">Limits</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="stepper-row">
+          <span class="field-value">Max. Teilnehmer</span>
+          <div class="stepper">
+            <button class="stepper-btn" type="button" onClick="{{decParticipants}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
+            </button>
+            <span class="stepper-val">{{maxParticipants}}</span>
+            <button class="stepper-btn" type="button" onClick="{{incParticipants}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            </button>
+          </div>
+        </div>
+        <div class="stepper-row">
+          <span class="field-value">Max. Lautstärke (dB)</span>
+          <div class="stepper">
+            <button class="stepper-btn" type="button" onClick="{{decVolume}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
+            </button>
+            <span class="stepper-val">{{maxVolume}}</span>
+            <button class="stepper-btn" type="button" onClick="{{incVolume}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">Sichtbarkeit</p>
+      <div class="segmented">
+        <sc-for list="{{visibilities}}" as="v" hint-placeholder-count="2">
+          <div class="{{v.segClass}}" onClick="{{v.pick}}">{{v.label}}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex:1;"></div>
+
+    <button class="btn-primary" type="button">Meet erstellen</button>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { timeMode: 'fixed', visibility: 'public', maxParticipants: 30, maxVolume: 85 };
+  }
+
+  setTimeMode(key) {
+    this.setState({ timeMode: key });
+  }
+
+  setVisibility(key) {
+    this.setState({ visibility: key });
+  }
+
+  bump(field, delta, min, max) {
+    const next = Math.min(max, Math.max(min, this.state[field] + delta));
+    this.setState({ [field]: next });
+  }
+
+  renderVals() {
+    const timeModeDefs = [
+      { key: 'fixed', label: 'Fixed' },
+      { key: 'open-start', label: 'Open Start' },
+      { key: 'open-end', label: 'Open End' },
+    ];
+    const timeModes = timeModeDefs.map((m) => ({
+      ...m,
+      segClass: 'segment' + (this.state.timeMode === m.key ? ' active' : ''),
+      pick: () => this.setTimeMode(m.key),
+    }));
+
+    const visibilityDefs = [
+      { key: 'public', label: 'Öffentlich' },
+      { key: 'private', label: 'Privat' },
+    ];
+    const visibilities = visibilityDefs.map((v) => ({
+      ...v,
+      segClass: 'segment' + (this.state.visibility === v.key ? ' active' : ''),
+      pick: () => this.setVisibility(v.key),
+    }));
+
+    return {
+      timeModes,
+      visibilities,
+      maxParticipants: this.state.maxParticipants,
+      maxVolume: this.state.maxVolume,
+      decParticipants: () => this.bump('maxParticipants', -1, 2, 200),
+      incParticipants: () => this.bump('maxParticipants', 1, 2, 200),
+      decVolume: () => this.bump('maxVolume', -5, 50, 120),
+      incVolume: () => this.bump('maxVolume', 5, 50, 120),
+    };
+  }
+}
+</script>
+</body>
+</html>

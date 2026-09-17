@@ -1,0 +1,10 @@
+# Build artifacts
+bin/
+obj/
+
+# Rider
+.idea/
+
+# MSBuild user-specific
+*.user
+/.ignore

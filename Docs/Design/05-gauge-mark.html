@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RevUp Gauge Mark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Manrope:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C1311;
+    --surface1: #112320;
+    --surface2: #1D424A;
+    --border: #17302D;
+    --text: #CBD9D7;
+    --text-dim: #7D9490;
+    --accent: #00DBAC;
+    --warning: #FFB020;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', system-ui, sans-serif;
+    padding: 56px 24px 72px;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .doc-nav {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 0 0 24px;
+  }
+
+  .doc-nav a {
+    color: var(--text);
+  }
+
+  h1 {
+    font-family: 'Big Shoulders Display', 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--text);
+  }
+
+  .lede {
+    max-width: 62ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .concept {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .concept dt {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .concept dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  .variants {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .card {
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .card-name {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .card-use {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    background:
+      radial-gradient(circle at 50% 40%, rgba(0,219,172,0.025), transparent 60%),
+      radial-gradient(circle at 40% 50%, rgba(0,219,172,0.125), transparent 60%),
+      radial-gradient(circle at 60% 50%, rgba(0,219,172,0.125), transparent 60%),
+      radial-gradient(circle at 50% 60%, rgba(0,219,172,0.025), transparent 60%);
+  }
+
+  .stage svg { display: block; }
+
+  .scale-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border);
+  }
+
+  .scale-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scale-item svg { display: block; }
+
+  .scale-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .swatches {
+    display: flex;
+    gap: 12px;
+  }
+
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .swatch::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--sw, var(--accent));
+    flex: none;
+  }
+
+  .rationale {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .rationale h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  .rationale p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card { transition: transform 160ms ease, border-color 160ms ease; }
+    .card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="doc-nav">Dokument 5 von 11 &middot; <a href="04-DESIGN.md">&larr; 04 Design-Grundlagen</a> &middot; Weiter: <a href="../ux/06-FALLBESCHREIBUNG.md">06 Fallbeschreibung &rarr;</a></p>
+  <header>
+    <span class="eyebrow">Icon concept &middot; approved</span>
+    <h1>RevUp Gauge Mark</h1>
+    <p class="lede">A rev-counter needle inside a rounded badge, built the same way as the EncontrolE4 reference set: one flat background, a light dial, one accent element that carries the swap between variants.</p>
+  </header>
+
+  <dl class="concept">
+    <dt>Motif</dt>
+    <dd>Tachometer sweep: a 270&deg; dial with a needle pointing into the redline. Reads as "rev up" at any size, ties directly to the car-meet subject without spelling out a literal car.</dd>
+  </dl>
+
+  <div class="variants">
+
+    <div class="card">
+      <div class="card-label">
+        <span class="card-name">Primary</span>
+        <span class="card-use">default mark</span>
+      </div>
+      <div class="stage">
+        <svg viewBox="0 0 100 100" width="132" height="132">
+          <rect width="100" height="100" rx="26" fill="#112320"/>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+        </svg>
+      </div>
+      <div class="scale-row">
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="20" height="20">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">20px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="32" height="32">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">32px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="48" height="48">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#00DBAC" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">48px</span>
+        </div>
+      </div>
+      <div class="swatches">
+        <span class="swatch" style="--sw:#112320">#112320</span>
+        <span class="swatch" style="--sw:#CBD9D7">#CBD9D7</span>
+        <span class="swatch" style="--sw:#00DBAC">#00DBAC</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">
+        <span class="card-name">Alert</span>
+        <span class="card-use">needle swap only</span>
+      </div>
+      <div class="stage">
+        <svg viewBox="0 0 100 100" width="132" height="132">
+          <rect width="100" height="100" rx="26" fill="#112320"/>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+        </svg>
+      </div>
+      <div class="scale-row">
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="20" height="20">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">20px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="32" height="32">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">32px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="48" height="48">
+            <rect width="100" height="100" rx="26" fill="#112320"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#CBD9D7" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
+          </svg>
+          <span class="scale-caption">48px</span>
+        </div>
+      </div>
+      <div class="swatches">
+        <span class="swatch" style="--sw:#112320">#112320</span>
+        <span class="swatch" style="--sw:#CBD9D7">#CBD9D7</span>
+        <span class="swatch" style="--sw:#FFB020">#FFB020</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">
+        <span class="card-name">Inverted</span>
+        <span class="card-use">light ground / store listing</span>
+      </div>
+      <div class="stage">
+        <svg viewBox="0 0 100 100" width="132" height="132">
+          <rect width="100" height="100" rx="26" fill="#00DBAC"/>
+          <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#0C1311" stroke-width="8" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#0C1311" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="6" fill="#112320"/>
+        </svg>
+      </div>
+      <div class="scale-row">
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="20" height="20">
+            <rect width="100" height="100" rx="26" fill="#00DBAC"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#0C1311" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#0C1311" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#112320"/>
+          </svg>
+          <span class="scale-caption">20px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="32" height="32">
+            <rect width="100" height="100" rx="26" fill="#00DBAC"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#0C1311" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#0C1311" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#112320"/>
+          </svg>
+          <span class="scale-caption">32px</span>
+        </div>
+        <div class="scale-item">
+          <svg viewBox="0 0 100 100" width="48" height="48">
+            <rect width="100" height="100" rx="26" fill="#00DBAC"/>
+            <path d="M 25.96 74.04 A 34 34 0 1 1 74.04 74.04" fill="none" stroke="#0C1311" stroke-width="8" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="68.38" y2="31.62" stroke="#0C1311" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="#112320"/>
+          </svg>
+          <span class="scale-caption">48px</span>
+        </div>
+      </div>
+      <div class="swatches">
+        <span class="swatch" style="--sw:#00DBAC">#00DBAC</span>
+        <span class="swatch" style="--sw:#0C1311">#0C1311</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rationale">
+    <div>
+      <h2>Small</h2>
+      <p>Two shapes carry the whole read at 20&ndash;32px: the open ring and the angled needle. No detail is lost because none of the detail depends on fine line work.</p>
+    </div>
+    <div>
+      <h2>Large</h2>
+      <p>At badge size the gap in the dial, the needle's taper, and the hub give it real depth instead of sitting flat, the same way the reference mark layers a leaf, a check and a plus.</p>
+    </div>
+    <div>
+      <h2>Variation</h2>
+      <p>Only the needle or the background ever changes. Ring, hub and geometry stay fixed, so new contexts (alerts, light placements) are a one-line recolor, not a redraw.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

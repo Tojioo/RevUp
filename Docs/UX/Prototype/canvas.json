@@ -1,0 +1,12 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "Entdecken" },
+    { "file": "Erstellen.dc.html", "x": 480, "y": 0, "w": 390, "h": 844, "title": "Erstellen" },
+    { "file": "Detail.dc.html", "x": 960, "y": 0, "w": 390, "h": 844, "title": "Meet-Detail" },
+    { "file": "MeineMeets.dc.html", "x": 1440, "y": 0, "w": 390, "h": 844, "title": "Meine Meets" }
+  ],
+  "annotations": [
+    { "id": "process-note", "x": 0, "y": -100, "w": 500, "text": "RevUp Wireframes -> Prototyp, Schritt 5.\nStatische Mockups zuerst (Layout), danach Interaktion (Filter, Beitreten, Annehmen/Ablehnen)." }
+  ],
+  "launch": { "view": "canvas" }
+}

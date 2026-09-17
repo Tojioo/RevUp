@@ -1,0 +1,39 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    width: 100%;
+    max-width: 640px;
+    padding: 24px 20px 64px;
+}
+
+#blazor-error-ui {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    color: var(--text);
+    bottom: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.8rem 1.2rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.8rem;
+    top: 0.5rem;
+}
