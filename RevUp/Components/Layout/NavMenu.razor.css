@@ -32,7 +32,7 @@
     gap: 8px;
 }
 
-.nav-link {
+.nav ::deep .nav-link {
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 14px;
@@ -42,11 +42,11 @@
     border-radius: 8px;
 }
 
-.nav-link:hover {
+.nav ::deep .nav-link:hover {
     color: var(--text);
 }
 
-.nav-link.active {
+.nav ::deep .nav-link.active {
     color: var(--accent);
     background: rgba(0, 219, 172, 0.12);
 }
