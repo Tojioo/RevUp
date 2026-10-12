@@ -6,9 +6,9 @@ public class MeetService : IMeetService
 {
 	private readonly List<Meet> _meets;
 
-	public MeetService()
+	public MeetService(TimeProvider clock)
 	{
-		var today = DateTime.Today;
+		var today = clock.GetLocalNow().Date;
 		var nextSaturday = today.AddDays(((int)DayOfWeek.Saturday - (int)today.DayOfWeek + 7) % 7);
 		var nextSunday = nextSaturday.AddDays(1);
 
@@ -59,6 +59,8 @@ public class MeetService : IMeetService
 	}
 
 	public IReadOnlyList<Meet> GetMeets() => _meets;
+
+	public MeetCreationResult Create(MeetDraft draft) => throw new NotImplementedException();
 
 	private static List<string> SampleNames(int count)
 	{

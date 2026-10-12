@@ -15,6 +15,7 @@ public class Program
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
+		builder.Services.AddSingleton(TimeProvider.System);
 		builder.Services.AddSingleton<IMeetService, MeetService>();
 
 		var app = builder.Build();
