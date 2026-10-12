@@ -18,6 +18,9 @@
 			"documentInternalElements": false,
 			"documentPrivateElements": false,
 			"documentPrivateFields": false
+		},
+		"layoutRules": {
+			"newlineAtEndOfFile": "omit"
 		}
 	}
 }

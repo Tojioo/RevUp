@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RevUp\RevUp.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit"/>
   </ItemGroup>
 

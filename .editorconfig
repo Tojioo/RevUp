@@ -24,6 +24,12 @@ resharper_csharp_indent_style = tab
 resharper_csharp_indent_size = 4
 # noinspection EditorConfigKeyCorrectness
 dotnet_diagnostic.SA1027.severity = none
+# Project conventions: private fields use the _camelCase prefix instead of this., files have no license header.
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1633.severity = none
+# Because XML documentation files are not generated, StyleCop's XML comment analysis is off.
+dotnet_diagnostic.SA0001.severity = none
 
 [{*.slnx,*.xml,*.csproj,*.props}]
 

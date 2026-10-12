@@ -32,6 +32,8 @@ Von der Ankündigung bis zur An-/Abmeldung der Teilnehmer, ohne Umweg über Chat
 
 - **ASP.NET Core + Blazor** (Server-Interaktivität), C#
 - .NET 10
+- Tests: xUnit, CI: GitHub Actions (`dotnet test RevUp.slnx` bei jedem Push und Pull Request)
+- Code-Analyse: StyleCop, Build ohne Warnungen
 
 ## Umfang (MVP)
 

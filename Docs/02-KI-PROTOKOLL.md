@@ -19,5 +19,7 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-08-28 | Korrektur: Prototyp soll rein lokal sein, kein Claude-Link, keine geteilte Live-Version.                                                                                              |
 | 2026-08-28 | Präzisierung: Claude Design darf intern weiterverwendet werden, es soll nur nicht die einzige Doku sein und nicht öffentlich geteilt werden.                                          |
 | 2026-08-28 | Auftrag: alle Docs chronologisch nummerieren, zusätzlich Zurück/Weiter-Links zwischen den Seiten.                                                                                     |
+| 2026-10-10 | Abgleich von RevUp mit den Vorgaben der LB; Vorschlag, Erkenntnisse aus einem anderen eigenen Projekt (Architektur, Designsprache, CI, Testaufbau) zu übernehmen.                     |
+| 2026-10-12 | Auftrag: bestehende Entdecken-Seite behalten, technisches Fundament aufsetzen (CI, Vorlagen, Story-IDs, Vorgehen), Stories als GitHub-Issues anlegen und mit US-01 beginnen.         |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

@@ -4,5 +4,5 @@ namespace RevUp.Services;
 
 public interface IMeetService
 {
-    IReadOnlyList<Meet> GetMeets();
+	IReadOnlyList<Meet> GetMeets();
 }

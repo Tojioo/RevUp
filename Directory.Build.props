@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <!-- Automatically installs StyleCop to all projects in the solution -->
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all" />
   
     <!-- Links the single stylecop.json file from the solution root to all projects -->
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Link="stylecop.json" />
