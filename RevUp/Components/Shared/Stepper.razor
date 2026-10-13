@@ -1,0 +1,34 @@
+<div class="stepper-row">
+    <span class="stepper-label">@Label</span>
+    <div class="stepper">
+        <button type="button" class="stepper-btn" aria-label="@($"{Label} verringern")" disabled="@(Value <= Min)" @onclick="() => ChangeAsync(-Step)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+        </button>
+        <span class="stepper-value" aria-live="polite">@Value</span>
+        <button type="button" class="stepper-btn" aria-label="@($"{Label} erhöhen")" disabled="@(Value >= Max)" @onclick="() => ChangeAsync(Step)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    [Parameter]
+    public int Min { get; set; }
+
+    [Parameter]
+    public int Max { get; set; } = int.MaxValue;
+
+    [Parameter]
+    public int Step { get; set; } = 1;
+
+    private Task ChangeAsync(int delta) => ValueChanged.InvokeAsync(Math.Clamp(Value + delta, Min, Max));
+}

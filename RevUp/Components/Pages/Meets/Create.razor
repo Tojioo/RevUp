@@ -1,0 +1,105 @@
+@page "/meets/create"
+@rendermode InteractiveServer
+@inject IMeetService MeetService
+@inject NavigationManager Navigation
+
+<PageTitle>Neues Meet – RevUp</PageTitle>
+
+<h1 class="page-title">Neues Meet</h1>
+
+<EditForm EditContext="_editContext" OnSubmit="Submit">
+    <div class="form">
+        <section>
+            <p class="section-label">Angaben</p>
+            <div class="field-group">
+                <label class="field-row">
+                    <span class="field-label">Titel</span>
+                    <InputText class="field-input" @bind-Value="_draft.Title" placeholder="Sonntagsausfahrt Tuning-Treff" />
+                    <ValidationMessage For="() => _draft.Title" />
+                </label>
+                <label class="field-row">
+                    <span class="field-label">Thema</span>
+                    <InputText class="field-input" @bind-Value="_draft.Theme" placeholder="Tuning" list="themes" />
+                    <ValidationMessage For="() => _draft.Theme" />
+                </label>
+                <label class="field-row">
+                    <span class="field-label">Ort</span>
+                    <InputText class="field-input" @bind-Value="_draft.Location" placeholder="Parkplatz Industriestrasse 12, Zürich" />
+                    <ValidationMessage For="() => _draft.Location" />
+                </label>
+                <label class="field-row">
+                    <span class="field-label">Veranstalter</span>
+                    <InputText class="field-input" @bind-Value="_draft.OrganizerName" placeholder="Dein Name" autocomplete="name" />
+                    <ValidationMessage For="() => _draft.OrganizerName" />
+                </label>
+            </div>
+            <datalist id="themes">
+                @foreach (var theme in _themes)
+                {
+                    <option value="@theme"></option>
+                }
+            </datalist>
+        </section>
+
+        <section>
+            <p class="section-label">Zeit</p>
+            <div class="field-group">
+                <label class="field-row">
+                    <span class="field-label">Start</span>
+                    <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.StartTime" />
+                    <ValidationMessage For="() => _draft.StartTime" />
+                </label>
+                <label class="field-row">
+                    <span class="field-label">Ende</span>
+                    <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.EndTime" />
+                    <ValidationMessage For="() => _draft.EndTime" />
+                </label>
+            </div>
+        </section>
+
+        <section>
+            <p class="section-label">Limits</p>
+            <div class="limits">
+                <Stepper Label="Max. Teilnehmer" @bind-Value="_draft.MaxAttendees" Min="2" Max="500" />
+                <ValidationMessage For="() => _draft.MaxAttendees" />
+                <Stepper Label="Max. Lautstärke (dB)" @bind-Value="_draft.MaxVolumeDb" Min="50" Max="130" Step="5" />
+                <ValidationMessage For="() => _draft.MaxVolumeDb" />
+            </div>
+        </section>
+
+        <button type="submit" class="btn-primary">Meet erstellen</button>
+    </div>
+</EditForm>
+
+@code {
+    private readonly MeetDraft _draft = new();
+    private EditContext _editContext = null!;
+    private ValidationMessageStore _messages = null!;
+    private List<string> _themes = [];
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_draft);
+        _messages = new ValidationMessageStore(_editContext);
+        _editContext.OnFieldChanged += (_, args) => _messages.Clear(args.FieldIdentifier);
+        _themes = MeetService.GetMeets().Select(meet => meet.Theme).Distinct().Order().ToList();
+    }
+
+    private void Submit()
+    {
+        _messages.Clear();
+        var result = MeetService.Create(_draft);
+        if (result.Succeeded)
+        {
+            Navigation.NavigateTo("/meets");
+            return;
+        }
+
+        foreach (var error in result.Errors)
+        {
+            _messages.Add(_editContext.Field(error.Field), error.Message);
+        }
+
+        _editContext.NotifyValidationStateChanged();
+    }
+}
