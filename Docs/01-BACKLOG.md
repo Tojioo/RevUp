@@ -36,6 +36,8 @@ Priorisiert (P1 = zuerst umsetzen). Format: *Als \<Rolle> möchte ich \<Ziel>, d
 
 Jede Story ist ein GitHub-Issue mit derselben ID im Titel (Issue-Nummer = Story-Nummer, z. B. US-04 = #4), Label `user story`
 und Priorität (`P1` bis `P3`). Die Sprints sind Meilensteine: Sprint 1 = P1, Sprint 2 = P2, Sprint 3 = P3.
+Der Stand jeder Story ist auf dem [Board](https://github.com/users/Tojioo/projects/2/views/1) sichtbar
+(Backlog, Sprint Backlog, In Progress, Review, Done).
 
 **Definition of Ready:** Story im Format «Als … möchte ich …, damit …», eindeutige ID, prüfbare Akzeptanzkriterien, Priorität.
 

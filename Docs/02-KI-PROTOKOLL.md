@@ -21,5 +21,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-08-28 | Auftrag: alle Docs chronologisch nummerieren, zusätzlich Zurück/Weiter-Links zwischen den Seiten.                                                                                     |
 | 2026-10-10 | Abgleich von RevUp mit den Vorgaben der LB; Vorschlag, Erkenntnisse aus einem anderen eigenen Projekt (Architektur, Designsprache, CI, Testaufbau) zu übernehmen.                     |
 | 2026-10-12 | Auftrag: bestehende Entdecken-Seite behalten, technisches Fundament aufsetzen (CI, Vorlagen, Story-IDs, Vorgehen), Stories als GitHub-Issues anlegen und mit US-01 beginnen.         |
+| 2026-10-13 | Frage, wie das Projekt-Board (GitHub Projects) eingerichtet wird; Link zum Board im Backlog ergänzt.                                                                                       |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*
