@@ -3,8 +3,13 @@ using RevUp.Models;
 
 namespace RevUp.Services;
 
-public class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetService
+public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetService, IDisposable
 {
+	private const int _maxNameLength = 40;
+
+	// Because two people could otherwise take the last seat of a meet at the same moment.
+	private readonly SemaphoreSlim _joinLock = new(1, 1);
+
 	public async Task<IReadOnlyList<MeetListItem>> GetUpcomingMeetsAsync(CancellationToken cancellationToken = default)
 	{
 		var now = clock.GetLocalNow().DateTime;
@@ -16,9 +21,41 @@ public class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetServi
 			.ToList();
 	}
 
-	public Task<MeetDetails?> GetMeetDetailsAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public async Task<MeetDetails?> GetMeetDetailsAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		var meet = await meets.GetByIdAsync(id, cancellationToken);
+		return meet is null ? null : MeetDetails.From(meet);
+	}
 
-	public Task<JoinResult> JoinAsync(Guid id, string participantName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public async Task<JoinResult> JoinAsync(Guid id, string participantName, CancellationToken cancellationToken = default)
+	{
+		if (participantName.Trim().Length is 0 or > _maxNameLength)
+		{
+			return new JoinResult(JoinStatus.InvalidName);
+		}
+
+		await _joinLock.WaitAsync(cancellationToken);
+		try
+		{
+			var meet = await meets.GetByIdAsync(id, cancellationToken);
+			if (meet is null)
+			{
+				return new JoinResult(JoinStatus.NotFound);
+			}
+
+			var result = JoinPolicies.For(meet).Join(meet, participantName);
+			if (result.Status == JoinStatus.Joined)
+			{
+				await meets.UpdateAsync(meet, cancellationToken);
+			}
+
+			return result;
+		}
+		finally
+		{
+			_joinLock.Release();
+		}
+	}
 
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
@@ -45,6 +82,8 @@ public class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetServi
 		await meets.AddAsync(meet, cancellationToken);
 		return new MeetCreationResult(meet, []);
 	}
+
+	public void Dispose() => _joinLock.Dispose();
 
 	// Assumption: a meet without an end (Open End) is over once its start day has passed.
 	private static bool HasEnded(Meet meet, DateTime now) =>

@@ -10,5 +10,5 @@ public sealed class PrivateJoinPolicy : IJoinPolicy
 
 	public string LocationHint => "Ort nach Freigabe";
 
-	public JoinResult Join(Meet meet, string participantName) => throw new NotImplementedException();
+	public JoinResult Join(Meet meet, string participantName) => new(JoinStatus.RequestPending);
 }

@@ -4,13 +4,15 @@ using RevUp.Services;
 
 namespace RevUp.Tests;
 
-public class MeetServiceTests
+public sealed class MeetServiceTests : IDisposable
 {
 	private readonly FakeMeetRepository _repository = new();
 	private readonly MeetService _service;
 
 	public MeetServiceTests() =>
 		_service = new MeetService(_repository, new FakeTimeProvider(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero)));
+
+	public void Dispose() => _service.Dispose();
 
 	[Fact]
 	public async Task AValidMeetIsSavedAndAppearsInTheList()

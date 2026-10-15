@@ -16,5 +16,20 @@ public sealed record MeetDetails(
 	int AttendeeCount,
 	int MaxAttendees)
 {
-	public static MeetDetails From(Meet meet) => throw new NotImplementedException();
+	public static MeetDetails From(Meet meet)
+	{
+		var policy = JoinPolicies.For(meet);
+		return new MeetDetails(
+			meet.Id,
+			meet.Title,
+			meet.Theme,
+			MeetTimeWindow.Format(meet),
+			meet.OrganizerName,
+			meet.MaxVolumeDb,
+			meet.IsPublic,
+			policy.Label,
+			policy.LocationHint,
+			meet.AttendeeCount,
+			meet.MaxAttendees);
+	}
 }
