@@ -1,7 +1,8 @@
 <Solution>
-  <Properties Name="RevUp"/>
-  <Project Path="RevUp\RevUp.csproj"/>
-  <Project Path="RevUp.Tests\RevUp.Tests.csproj"/>
-  <Project Path="Docs\Documentation.csproj"/>
-  <Project Path="SolutionFiles.csproj"/>
+  <Properties Name="RevUp" />
+  <Project Path="RevUp\RevUp.csproj" />
+  <Project Path="RevUp.IntegrationTests\RevUp.IntegrationTests.csproj" />
+  <Project Path="RevUp.Tests\RevUp.Tests.csproj" />
+  <Project Path="Docs\Documentation.csproj" />
+  <Project Path="SolutionFiles.csproj" />
 </Solution>

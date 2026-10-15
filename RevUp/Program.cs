@@ -1,11 +1,12 @@
 using RevUp.Components;
+using RevUp.Data;
 using RevUp.Services;
 
 namespace RevUp;
 
 public static class Program
 {
-	public static void Main(string[] args)
+	public static async Task Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,18 @@ public static class Program
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
+		var connectionString = builder.Configuration.GetConnectionString("RevUp")
+			?? throw new InvalidOperationException("The connection string 'RevUp' is missing in the configuration.");
+		var databaseOptions = RevUpDatabase.CreateOptions(connectionString);
+
 		builder.Services.AddSingleton(TimeProvider.System);
+		builder.Services.AddSingleton(databaseOptions);
+		builder.Services.AddSingleton<IMeetRepository, MeetRepository>();
 		builder.Services.AddSingleton<IMeetService, MeetService>();
 
 		var app = builder.Build();
+
+		await RevUpDatabase.InitializeAsync(databaseOptions, app.Services.GetRequiredService<TimeProvider>());
 
 		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
@@ -36,6 +45,6 @@ public static class Program
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
-		app.Run();
+		await app.RunAsync();
 	}
 }

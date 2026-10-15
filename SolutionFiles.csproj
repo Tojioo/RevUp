@@ -12,6 +12,7 @@
     <None Include=".run\**;README.md;.gitignore;.editorconfig" Visible="true"/>
     <None Include="Directory.Build.props" />
     <None Include=".github\**" Visible="true" />
+    <None Include="tools\**" Visible="true" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,87 +1,24 @@
+using RevUp.Data;
 using RevUp.Models;
 
 namespace RevUp.Services;
 
-public class MeetService : IMeetService
+public class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetService
 {
-	private readonly Lock _lock = new();
-	private readonly TimeProvider _clock;
-	private readonly List<Meet> _meets;
-
-	public MeetService(TimeProvider clock)
+	public async Task<IReadOnlyList<MeetListItem>> GetUpcomingMeetsAsync(CancellationToken cancellationToken = default)
 	{
-		_clock = clock;
-		var today = clock.GetLocalNow().Date;
-		var nextSaturday = today.AddDays(((int)DayOfWeek.Saturday - (int)today.DayOfWeek + 7) % 7);
-		var nextSunday = nextSaturday.AddDays(1);
-
-		_meets =
-		[
-			new Meet
-			{
-				Title = "Sonntagsausfahrt Tuning-Treff",
-				Theme = "Tuning",
-				Location = "Parkplatz Industriestrasse 12, Zürich",
-				OrganizerName = "Livio",
-				IsPublic = true,
-				TimeMode = TimeMode.Fixed,
-				StartTime = nextSaturday.AddHours(18),
-				EndTime = nextSaturday.AddHours(22),
-				MaxAttendees = 30,
-				MaxVolumeDb = 90,
-				AttendeeNames = SampleNames(12),
-			},
-			new Meet
-			{
-				Title = "90er Treffen Parkhaus Nord",
-				Theme = "90s Cars",
-				Location = "Parkhaus Nord, Ebene 3",
-				OrganizerName = "Livio",
-				IsPublic = false,
-				TimeMode = TimeMode.OpenStart,
-				StartTime = nextSaturday.AddHours(18),
-				MaxAttendees = 25,
-				MaxVolumeDb = 85,
-				AttendeeNames = SampleNames(18),
-			},
-			new Meet
-			{
-				Title = "EV & Hybrid Stammtisch",
-				Theme = "Green",
-				Location = "Café Ampere, Bahnhofstrasse 4",
-				OrganizerName = "Aylin",
-				IsPublic = true,
-				TimeMode = TimeMode.Fixed,
-				StartTime = nextSunday.AddHours(14),
-				EndTime = nextSunday.AddHours(17),
-				MaxAttendees = 20,
-				MaxVolumeDb = 70,
-				AttendeeNames = SampleNames(6),
-			},
-		];
-	}
-
-	public IReadOnlyList<Meet> GetMeets()
-	{
-		lock (_lock)
-		{
-			return _meets.ToList();
-		}
-	}
-
-	public IReadOnlyList<MeetListItem> GetUpcomingMeets()
-	{
-		var now = _clock.GetLocalNow().DateTime;
-		return GetMeets()
+		var now = clock.GetLocalNow().DateTime;
+		var all = await meets.GetAllAsync(cancellationToken);
+		return all
 			.Where(meet => !HasEnded(meet, now))
 			.OrderBy(meet => meet.StartTime)
 			.Select(MeetListItem.From)
 			.ToList();
 	}
 
-	public MeetCreationResult Create(MeetDraft draft)
+	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
-		var errors = MeetDraftValidator.Validate(draft, _clock.GetLocalNow().DateTime);
+		var errors = MeetDraftValidator.Validate(draft, clock.GetLocalNow().DateTime);
 		if (errors.Count > 0)
 		{
 			return new MeetCreationResult(null, errors);
@@ -101,21 +38,11 @@ public class MeetService : IMeetService
 			IsPublic = draft.IsPublic,
 		};
 
-		lock (_lock)
-		{
-			_meets.Add(meet);
-		}
-
+		await meets.AddAsync(meet, cancellationToken);
 		return new MeetCreationResult(meet, []);
 	}
 
 	// Assumption: a meet without an end (Open End) is over once its start day has passed.
 	private static bool HasEnded(Meet meet, DateTime now) =>
 		meet.EndTime is { } end ? end <= now : meet.StartTime.Date < now.Date;
-
-	private static List<string> SampleNames(int count)
-	{
-		string[] pool = ["Aylin", "Livio", "Marco", "Sina", "Noah", "Elif", "Timo", "Léa", "Kevin", "Zoe"];
-		return Enumerable.Range(0, count).Select(i => pool[i % pool.Length]).ToList();
-	}
 }

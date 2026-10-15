@@ -1,9 +1,7 @@
 namespace RevUp.Models;
 
-public class JoinRequest
+public class JoinRequest : Entity
 {
-	public Guid Id { get; init; } = Guid.NewGuid();
-
 	public required Guid MeetId { get; init; }
 
 	public required string ParticipantName { get; init; }

@@ -32,6 +32,7 @@ Von der Ankündigung bis zur An-/Abmeldung der Teilnehmer, ohne Umweg über Chat
 
 - **ASP.NET Core + Blazor** (Server-Interaktivität), C#
 - .NET 10
+- Datenhaltung: linq2db mit SQLite (`revup.db`, Connection String `RevUp` in `appsettings.json`); fehlende Tabellen werden beim Start angelegt, eine leere Datenbank mit Beispiel-Meets gefüllt
 - Tests: xUnit, CI: GitHub Actions (`dotnet test RevUp.slnx` bei jedem Push und Pull Request)
 - Code-Analyse: StyleCop, Build ohne Warnungen
 
@@ -51,12 +52,13 @@ Siehe Backlog, Abschnitt "Später/Stretch".
 
 ## Solution-Struktur
 
-Die Solution ist in 3 Projekte unterteilt:
+Die Solution ist in 4 Projekte unterteilt:
 
 | Projekt | Zweck |
 |---|---|
 | `RevUp/` | Die eigentliche Blazor-Web-App (`RevUp.csproj`) |
-| `RevUp.Tests/` | Unit-Tests (xUnit) |
+| `RevUp.Tests/` | Unit-Tests (xUnit): ohne I/O und Datenbank, mit eigenen Fakes |
+| `RevUp.IntegrationTests/` | Integrationstests gegen SQLite: jeder Test erhält eine frische Kopie von `Snapshot/revup.db`. Den Snapshot erzeugt `dotnet run --no-cache --file tools/create-snapshot.cs` mit dem echten Seeder; seine Daten sind auf den Erzeugungstag eingefroren |
 | `Docs/` | Kein echtes Projekt, sondern ein leeres SDK-Projekt (`Documentation.csproj`), das nur alle Markdown-/HTML-Dateien unter `Docs/` in Riders Solution Explorer sichtbar macht |
 
 ## Projektstruktur
