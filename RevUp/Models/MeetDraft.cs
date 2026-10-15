@@ -19,5 +19,5 @@ public class MeetDraft
 
 	public int MaxVolumeDb { get; set; } = 85;
 
-	public bool IsPublic { get; set; }
+	public bool IsPublic { get; set; } = true;
 }

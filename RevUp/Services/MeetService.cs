@@ -88,6 +88,7 @@ public class MeetService : IMeetService
 			EndTime = draft.EndTime,
 			MaxAttendees = draft.MaxAttendees,
 			MaxVolumeDb = draft.MaxVolumeDb,
+			IsPublic = draft.IsPublic,
 		};
 
 		lock (_lock)
