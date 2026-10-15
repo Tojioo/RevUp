@@ -5,11 +5,11 @@ namespace RevUp.Tests;
 
 public class MeetTimeWindowTests
 {
-	private static readonly DateTime Saturday = new(2026, 10, 17, 18, 0, 0);
+	private static readonly DateTime _saturday = new(2026, 10, 17, 18, 0, 0);
 
 	[Fact]
 	public void AFixedMeetShowsDayAndTimeSpan() =>
-		Assert.Equal("Sa, 17.10. · 18:00–22:00", MeetTimeWindow.Format(Meet(TimeMode.Fixed, Saturday.AddHours(4))));
+		Assert.Equal("Sa, 17.10. · 18:00–22:00", MeetTimeWindow.Format(Meet(TimeMode.Fixed, _saturday.AddHours(4))));
 
 	[Fact]
 	public void AnOpenStartMeetShowsFromWhenItOpens() =>
@@ -26,7 +26,7 @@ public class MeetTimeWindowTests
 		Location = "Parkplatz",
 		OrganizerName = "Livio",
 		TimeMode = mode,
-		StartTime = Saturday,
+		StartTime = _saturday,
 		EndTime = end,
 	};
 }
