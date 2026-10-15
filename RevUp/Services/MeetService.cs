@@ -69,6 +69,8 @@ public class MeetService : IMeetService
 		}
 	}
 
+	public IReadOnlyList<MeetListItem> GetUpcomingMeets() => throw new NotImplementedException();
+
 	public MeetCreationResult Create(MeetDraft draft)
 	{
 		var errors = MeetDraftValidator.Validate(draft, _clock.GetLocalNow().DateTime);
