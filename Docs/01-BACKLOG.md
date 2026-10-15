@@ -9,7 +9,7 @@
 | 1     | Projektidee & Team       | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> [README.md](../README.md) |
 | 2     | Vision & Product Backlog | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> dieses Dokument           |
 | 3     | Technisches Fundament    | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> CI, Vorlagen, Story-IDs, Vorgehen (siehe unten) |
-| 4     | Sprint 1 (US-01 – US-06) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen |
+| 4     | Sprint 1 (US-01 – US-06, US-17 – US-19) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen |
 | 5     | Sprint 2 (US-07 – US-10) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen |
 | 6     | Sprint 3 (US-11 – US-12) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen, optional |
 
@@ -31,6 +31,9 @@ Priorisiert (P1 = zuerst umsetzen). Format: *Als \<Rolle> möchte ich \<Ziel>, d
 | US-10 | P2   | Als Teilnehmer möchte ich sehen, wie viele Plätze bei einem Meet noch frei sind, damit ich weiss, ob sich eine Anfrage lohnt.                                                 | Anzeige "X / max. Teilnehmer" korrekt und live aktualisiert.                                              |
 | US-11 | P3   | Als Veranstalter möchte ich meine erstellten Meets in einer eigenen Übersicht sehen, damit ich sie verwalten kann.                                                            | Liste "Meine Meets" zeigt nur eigene Einträge inkl. Status der Anfragen.                                  |
 | US-12 | P3   | Als Teilnehmer möchte ich meine gestellten Beitrittsanfragen und deren Status einsehen, damit ich weiss, ob ich zugelassen wurde.                                             | Liste "Meine Anfragen" mit Status (offen/angenommen/abgelehnt).                                           |
+| US-17 | P1   | Als Besucher möchte ich ein Konto mit Benutzername und Passwort erstellen, damit meine Meets, Beitritte und Anfragen eindeutig mir gehören. | Benutzername eindeutig (3–30 Zeichen); Anzeigename; Passwort mind. 8 Zeichen, nur als Hash gespeichert; nach der Registrierung angemeldet. |
+| US-18 | P1   | Als Nutzer möchte ich mich an- und abmelden, damit niemand sonst in meinem Namen Meets erstellt oder beitritt. | Anmeldung mit Benutzername und Passwort; falsche Angaben ergeben eine allgemeine Meldung; angemeldet bleiben über ein Cookie; Abmelden; zu viele Fehlversuche werden kurz gesperrt. |
+| US-19 | P1   | Als Veranstalter möchte ich, dass nur angemeldete Personen beitreten und den Ort sehen, damit niemand mit einem fremden Namen zum Standort kommt. | Erstellen und Beitreten nur angemeldet (sonst zur Anmeldung); Veranstalter und Teilnehmer werden über das Konto gespeichert und mit Anzeigename gezeigt; den Ort sehen nur Veranstalter und beigetretene Konten. |
 
 ## Umsetzung
 
@@ -86,6 +89,7 @@ Bewusste Scope-Entscheidung: Diese Punkte sind fachlich Teil der ursprünglichen
 | US-14 | Als Veranstalter möchte ich mein Meet bei der Polizei anmelden/bewilligen lassen, damit es offiziell abgesichert ist.                                            | Setzt US-13 (Polizei-Rolle) voraus.                                 |
 | US-15 | Als Polizei möchte ich bei Lärmbeschwerden eine Warnung oder Räumungsankündigung an den Veranstalter senden, damit Probleme vor Ort schnell kommuniziert werden. | Setzt US-13/US-14 voraus; Echtzeit-Kommunikation nötig.                |
 | US-16 | Als Veranstalter möchte ich eine Person als "störend" melden, die am Standort markiert wird, damit andere Teilnehmer/die Polizei informiert sind.                | Moderationslogik + Missbrauchspotenzial, braucht eigenes Konzept.      |
+| US-20 | Als Nutzer möchte ich mein Konto zusätzlich mit Zwei-Faktor-Anmeldung oder Passkey schützen, damit ein gestohlenes Passwort nicht reicht. | Sinnvoll, aber für den MVP zu umfangreich (Authenticator-App, Wiederherstellungscodes, WebAuthn). |
 
 ## Nicht-funktionale Anforderungen (Auszug)
 
