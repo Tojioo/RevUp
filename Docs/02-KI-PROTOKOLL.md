@@ -27,5 +27,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-15 | Auftrag: mit US-03 (Meet-Liste) weitermachen.                                                                                                                                         |
 | 2026-10-15 | Vorgabe einer erweiterten `.editorconfig` mit strengeren Code-Style-Regeln; Code daran anpassen.                                                                                         |
 | 2026-10-15 | Vorgaben aus einer separaten Sitzung übernommen (Listen-Icons, Persistenz mit linq2db/SQLite, async, Basisklassen, Unit- und Integrationstests); als technische Aufgaben T-01 bis T-03 erfasst. |
+| 2026-10-15 | Rider-Hinweise in den Testprojekten beheben; danach mit US-04 (öffentlichem Meet beitreten) weitermachen.                                                                            |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

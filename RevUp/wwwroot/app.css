@@ -86,3 +86,134 @@ button {
     right: 0.8rem;
     top: 0.5rem;
 }
+
+/* Shared by several pages */
+
+.page-title {
+    font-size: 34px;
+    margin-bottom: 16px;
+}
+
+.empty-state {
+    padding: 32px 8px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.badge-row {
+    display: flex;
+    gap: 6px;
+}
+
+.badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.badge-public {
+    background: rgba(77, 163, 255, 0.16);
+    color: var(--info);
+}
+
+.badge-private {
+    background: rgba(255, 176, 32, 0.14);
+    color: var(--warning);
+}
+
+.badge-theme {
+    background: var(--surface2);
+    color: var(--text-dim);
+}
+
+.section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 8px 2px;
+}
+
+.field-group {
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.field-row:last-child {
+    border-bottom: none;
+}
+
+.field-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* 16px keeps iOS Safari from zooming into the field on focus. */
+.field-input {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    color-scheme: dark;
+}
+
+.field-input::placeholder {
+    color: var(--text-dim);
+    opacity: 0.6;
+}
+
+.field-input:focus {
+    outline: none;
+}
+
+.field-row:focus-within {
+    background: rgba(0, 219, 172, 0.06);
+}
+
+.hint {
+    margin: 8px 2px 0;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn-primary:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+}
