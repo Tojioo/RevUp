@@ -5,7 +5,7 @@ namespace RevUp.Services;
 /// <summary>Checks a new meet on the server, so the rules hold no matter what the form sends.</summary>
 public static class MeetDraftValidator
 {
-	private const string Required = "Pflichtfeld.";
+	private const string _required = "Pflichtfeld.";
 
 	public static IReadOnlyList<ValidationError> Validate(MeetDraft draft, DateTime now)
 	{
@@ -25,7 +25,7 @@ public static class MeetDraftValidator
 		var length = value.Trim().Length;
 		if (length == 0)
 		{
-			errors.Add(new ValidationError(field, Required));
+			errors.Add(new ValidationError(field, _required));
 		}
 		else if (length > maxLength)
 		{
@@ -37,7 +37,7 @@ public static class MeetDraftValidator
 	{
 		if (draft.StartTime is not { } start)
 		{
-			errors.Add(new ValidationError(nameof(MeetDraft.StartTime), Required));
+			errors.Add(new ValidationError(nameof(MeetDraft.StartTime), _required));
 		}
 		else if (start <= now)
 		{
@@ -46,7 +46,7 @@ public static class MeetDraftValidator
 
 		if (draft.EndTime is not { } end)
 		{
-			errors.Add(new ValidationError(nameof(MeetDraft.EndTime), Required));
+			errors.Add(new ValidationError(nameof(MeetDraft.EndTime), _required));
 		}
 		else if (end <= draft.StartTime)
 		{
