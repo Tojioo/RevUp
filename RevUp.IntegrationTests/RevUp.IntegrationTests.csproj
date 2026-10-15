@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <None Include="Snapshot\revup.db" CopyToOutputDirectory="PreserveNewest" Condition="Exists('Snapshot\revup.db')" />
+    <None Include="Snapshot\revup.db" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

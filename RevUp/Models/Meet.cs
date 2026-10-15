@@ -1,9 +1,7 @@
 namespace RevUp.Models;
 
-public class Meet
+public class Meet : Entity
 {
-	public Guid Id { get; init; } = Guid.NewGuid();
-
 	public required string Title { get; set; }
 
 	public required string Theme { get; set; }

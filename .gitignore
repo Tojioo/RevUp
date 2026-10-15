@@ -8,3 +8,9 @@ obj/
 # MSBuild user-specific
 *.user
 /.ignore
+
+# Local SQLite databases (the integration test snapshot is the one exception)
+*.db
+*.db-shm
+*.db-wal
+!RevUp.IntegrationTests/Snapshot/revup.db
