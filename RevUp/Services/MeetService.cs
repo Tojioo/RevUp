@@ -69,6 +69,16 @@ public class MeetService : IMeetService
 		}
 	}
 
+	public IReadOnlyList<MeetListItem> GetUpcomingMeets()
+	{
+		var now = _clock.GetLocalNow().DateTime;
+		return GetMeets()
+			.Where(meet => !HasEnded(meet, now))
+			.OrderBy(meet => meet.StartTime)
+			.Select(MeetListItem.From)
+			.ToList();
+	}
+
 	public MeetCreationResult Create(MeetDraft draft)
 	{
 		var errors = MeetDraftValidator.Validate(draft, _clock.GetLocalNow().DateTime);
@@ -98,6 +108,10 @@ public class MeetService : IMeetService
 
 		return new MeetCreationResult(meet, []);
 	}
+
+	// Assumption: a meet without an end (Open End) is over once its start day has passed.
+	private static bool HasEnded(Meet meet, DateTime now) =>
+		meet.EndTime is { } end ? end <= now : meet.StartTime.Date < now.Date;
 
 	private static List<string> SampleNames(int count)
 	{
