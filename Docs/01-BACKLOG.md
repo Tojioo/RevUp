@@ -64,6 +64,18 @@ CI grün ohne Warnungen; Coding Conventions, SOLID und Code Smells geprüft; Bac
   privat = Anfrage stellen und auf Freigabe warten (US-05). So verteilt sich die Unterscheidung öffentlich/privat nicht
   über den Code, und weitere Regeln (z. B. «nur auf Einladung») kommen ohne Änderung bestehender Klassen dazu.
 
+## Technische Aufgaben
+
+Keine User Stories: Sie liefern keine neue Funktion für Veranstalter oder Teilnehmer, sondern verbessern Darstellung,
+Architektur oder Testbarkeit. Ablauf wie bei den Stories (Issue, Branch mit ID, Pull Request). Bei reinem Refactoring
+bleiben die bestehenden Tests vor und nach jedem Schritt grün.
+
+| ID   | Aufgabe                                                                                                                                       | Grund                                                                                    |
+|------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| T-01 | Icons für Zeit und Ort auf den Meet-Karten (Kalender, Standort-Pin), gestaltet wie das bestehende Teilnehmer-Icon.                            | Schnellere Orientierung in der Liste. Icons sind dekorativ (`aria-hidden`), immer mit Text. |
+| T-02 | Persistenz mit linq2db und SQLite statt Speicherung im Arbeitsspeicher; asynchrone Service-Methoden; Basisklassen für Entitäten und Datenkontext. | Meets bleiben nach einem Neustart erhalten. Grundlage für US-04 bis US-06.               |
+| T-03 | Testaufbau: Unit-Tests ohne I/O mit eigenen Fakes; neues Projekt `RevUp.IntegrationTests`, das pro Test einen SQLite-Snapshot wiederherstellt. | Datenbank-Code wird getestet, ohne die schnellen Unit-Tests zu verlangsamen.             |
+
 ## Später / Stretch (bewusst nicht im MVP)
 
 Bewusste Scope-Entscheidung: Diese Punkte sind fachlich Teil der ursprünglichen Idee, würden den MVP-Rahmen aber sprengen (siehe README, Abschnitt "Bewusst ausgeklammert").
