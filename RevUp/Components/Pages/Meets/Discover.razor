@@ -58,9 +58,9 @@ else
     private string _selectedTheme = AllThemes;
     private List<MeetListItem> _filteredMeets = [];
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _meets = MeetService.GetUpcomingMeets();
+        _meets = await MeetService.GetUpcomingMeetsAsync();
         _themes = [AllThemes, .. _meets.Select(meet => meet.Theme).Distinct().Order()];
         ApplyFilter();
     }

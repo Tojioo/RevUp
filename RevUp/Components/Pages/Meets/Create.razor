@@ -7,7 +7,7 @@
 
 <h1 class="page-title">Neues Meet</h1>
 
-<EditForm EditContext="_editContext" OnSubmit="Submit">
+<EditForm EditContext="_editContext" OnSubmit="SubmitAsync">
     <div class="form">
         <section>
             <p class="section-label">Angaben</p>
@@ -90,18 +90,19 @@
     private ValidationMessageStore _messages = null!;
     private List<string> _themes = [];
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(_draft);
         _messages = new ValidationMessageStore(_editContext);
         _editContext.OnFieldChanged += (_, args) => _messages.Clear(args.FieldIdentifier);
-        _themes = MeetService.GetMeets().Select(meet => meet.Theme).Distinct().Order().ToList();
+        var meets = await MeetService.GetUpcomingMeetsAsync();
+        _themes = meets.Select(meet => meet.Theme).Distinct().Order().ToList();
     }
 
-    private void Submit()
+    private async Task SubmitAsync()
     {
         _messages.Clear();
-        var result = MeetService.Create(_draft);
+        var result = await MeetService.CreateAsync(_draft);
         if (result.Succeeded)
         {
             Navigation.NavigateTo("/meets");

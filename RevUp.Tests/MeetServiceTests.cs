@@ -6,21 +6,24 @@ namespace RevUp.Tests;
 
 public class MeetServiceTests
 {
-	private readonly MeetService _service = new(new FakeTimeProvider(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero)));
+	private readonly FakeMeetRepository _repository = new();
+	private readonly MeetService _service;
+
+	public MeetServiceTests() =>
+		_service = new MeetService(_repository, new FakeTimeProvider(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero)));
 
 	[Fact]
-	public void AValidMeetIsSavedAndAppearsInTheList()
+	public async Task AValidMeetIsSavedAndAppearsInTheList()
 	{
-		var countBefore = _service.GetMeets().Count;
 		var draft = MeetDrafts.Valid();
 		draft.Title = "  Sonntagsausfahrt  ";
 
-		var result = _service.Create(draft);
+		var result = await _service.CreateAsync(draft);
 
 		Assert.True(result.Succeeded);
 		Assert.Empty(result.Errors);
-		Assert.Equal(countBefore + 1, _service.GetMeets().Count);
-		var meet = Assert.Single(_service.GetMeets(), meet => meet.Id == result.Meet!.Id);
+		var meet = Assert.Single(_repository.Meets);
+		Assert.Equal(result.Meet!.Id, meet.Id);
 		Assert.Equal("Sonntagsausfahrt", meet.Title);
 		Assert.Equal(draft.Theme, meet.Theme);
 		Assert.Equal(draft.Location, meet.Location);
@@ -31,35 +34,35 @@ public class MeetServiceTests
 		Assert.Equal(draft.MaxAttendees, meet.MaxAttendees);
 		Assert.Equal(draft.MaxVolumeDb, meet.MaxVolumeDb);
 		Assert.Equal(0, meet.AttendeeCount);
+		Assert.Contains(await _service.GetUpcomingMeetsAsync(), item => item.Id == meet.Id);
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public void TheChosenVisibilityIsSaved(bool isPublic)
+	public async Task TheChosenVisibilityIsSaved(bool isPublic)
 	{
 		var draft = MeetDrafts.Valid();
 		draft.IsPublic = isPublic;
 
-		var result = _service.Create(draft);
+		await _service.CreateAsync(draft);
 
-		Assert.Equal(isPublic, result.Meet!.IsPublic);
+		Assert.Equal(isPublic, Assert.Single(_repository.Meets).IsPublic);
 	}
 
 	[Fact]
 	public void ANewDraftIsPublicLikeInThePrototype() => Assert.True(new MeetDraft().IsPublic);
 
 	[Fact]
-	public void AnInvalidMeetIsNotSaved()
+	public async Task AnInvalidMeetIsNotSaved()
 	{
-		var countBefore = _service.GetMeets().Count;
 		var draft = MeetDrafts.Valid();
 		draft.Title = string.Empty;
 
-		var result = _service.Create(draft);
+		var result = await _service.CreateAsync(draft);
 
 		Assert.False(result.Succeeded);
 		Assert.Contains(result.Errors, error => error.Field == nameof(MeetDraft.Title));
-		Assert.Equal(countBefore, _service.GetMeets().Count);
+		Assert.Empty(_repository.Meets);
 	}
 }

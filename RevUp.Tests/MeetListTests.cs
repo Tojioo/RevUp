@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Time.Testing;
+using RevUp.Models;
 using RevUp.Services;
 
 namespace RevUp.Tests;
@@ -6,39 +7,49 @@ namespace RevUp.Tests;
 public class MeetListTests
 {
 	private readonly FakeTimeProvider _clock = new(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero));
+	private readonly FakeMeetRepository _repository = new();
 	private readonly MeetService _service;
 
-	public MeetListTests() => _service = new MeetService(_clock);
+	public MeetListTests() => _service = new MeetService(_repository, _clock);
 
 	[Fact]
-	public void MeetsThatHaveEndedAreNotListed()
+	public async Task MeetsThatHaveEndedAreNotListed()
 	{
-		var meet = _service.Create(MeetDrafts.Valid()).Meet!;
-		Assert.Contains(_service.GetUpcomingMeets(), item => item.Id == meet.Id);
+		var meet = (await _service.CreateAsync(MeetDrafts.Valid())).Meet!;
+		Assert.Contains(await _service.GetUpcomingMeetsAsync(), item => item.Id == meet.Id);
 
 		_clock.Advance(meet.EndTime!.Value - MeetDrafts.Now + TimeSpan.FromMinutes(1));
 
-		Assert.DoesNotContain(_service.GetUpcomingMeets(), item => item.Id == meet.Id);
+		Assert.DoesNotContain(await _service.GetUpcomingMeetsAsync(), item => item.Id == meet.Id);
 	}
 
 	[Fact]
-	public void MeetsAreSortedBySoonestStart()
+	public async Task MeetsAreSortedBySoonestStart()
 	{
-		var starts = _service.GetUpcomingMeets().Select(item => _service.GetMeets().Single(meet => meet.Id == item.Id).StartTime).ToList();
+		foreach (var daysAhead in new[] { 3, 1, 2 })
+		{
+			var draft = MeetDrafts.Valid();
+			draft.Title = $"In {daysAhead} Tagen";
+			draft.StartTime = MeetDrafts.Now.AddDays(daysAhead);
+			draft.EndTime = draft.StartTime.Value.AddHours(3);
+			await _service.CreateAsync(draft);
+		}
 
-		Assert.NotEmpty(starts);
-		Assert.Equal(starts.Order(), starts);
+		var titles = (await _service.GetUpcomingMeetsAsync()).Select(item => item.Title);
+
+		Assert.Equal(["In 1 Tagen", "In 2 Tagen", "In 3 Tagen"], titles);
 	}
 
 	[Fact]
-	public void AnItemShowsTitleThemeTimeWindowAndVisibility()
+	public async Task AnItemShowsTitleThemeTimeWindowAndVisibility()
 	{
 		var draft = MeetDrafts.Valid();
 		draft.IsPublic = false;
-		var meet = _service.Create(draft).Meet!;
+		var meet = (await _service.CreateAsync(draft)).Meet!;
 
-		var item = _service.GetUpcomingMeets().Single(item => item.Id == meet.Id);
+		var item = Assert.Single(await _service.GetUpcomingMeetsAsync());
 
+		Assert.Equal(meet.Id, item.Id);
 		Assert.Equal(meet.Title, item.Title);
 		Assert.Equal(meet.Theme, item.Theme);
 		Assert.Equal(MeetTimeWindow.Format(meet), item.TimeWindow);
@@ -51,5 +62,5 @@ public class MeetListTests
 
 	[Fact]
 	public void TheListCannotRevealTheLocation() =>
-		Assert.DoesNotContain(typeof(MeetListItem).GetProperties(), property => property.Name == "Location");
+		Assert.DoesNotContain(typeof(MeetListItem).GetProperties(), property => property.Name == nameof(Meet.Location));
 }
