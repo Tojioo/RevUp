@@ -86,7 +86,7 @@ public class MeetDraftValidatorTests
 			nameof(MeetDraft.MaxVolumeDb),
 			draft => draft.MaxVolumeDb = 131,
 			"Zwischen 50 und 130 dB."
-		},
+		}
 	};
 
 	[Fact]
