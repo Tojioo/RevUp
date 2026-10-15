@@ -33,6 +33,22 @@ public class MeetServiceTests
 		Assert.Equal(0, meet.AttendeeCount);
 	}
 
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TheChosenVisibilityIsSaved(bool isPublic)
+	{
+		var draft = MeetDrafts.Valid();
+		draft.IsPublic = isPublic;
+
+		var result = _service.Create(draft);
+
+		Assert.Equal(isPublic, result.Meet!.IsPublic);
+	}
+
+	[Fact]
+	public void ANewDraftIsPublicLikeInThePrototype() => Assert.True(new MeetDraft().IsPublic);
+
 	[Fact]
 	public void AnInvalidMeetIsNotSaved()
 	{

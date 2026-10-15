@@ -18,4 +18,6 @@ public class MeetDraft
 	public int MaxAttendees { get; set; } = 20;
 
 	public int MaxVolumeDb { get; set; } = 85;
+
+	public bool IsPublic { get; set; } = true;
 }

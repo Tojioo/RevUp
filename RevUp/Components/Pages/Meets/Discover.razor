@@ -27,10 +27,11 @@ else
     <div class="card-list">
         @foreach (var meet in _filteredMeets)
         {
+            var policy = JoinPolicies.For(meet);
             <article class="meet-card" @key="meet.Id">
                 <div class="badge-row">
                     <span class="badge @(meet.IsPublic ? "badge-public" : "badge-private")">
-                        @(meet.IsPublic ? "Öffentlich" : "Privat")
+                        @policy.Label
                     </span>
                     <span class="badge badge-theme">@meet.Theme</span>
                 </div>
@@ -39,7 +40,7 @@ else
 
                 <div class="meta-row">
                     <span class="meta-item">@FormatTime(meet)</span>
-                    <span class="meta-item">@(meet.IsPublic ? "Ort nach Beitritt" : "Ort nach Freigabe")</span>
+                    <span class="meta-item">@policy.LocationHint</span>
                 </div>
 
                 <div class="meet-foot">
