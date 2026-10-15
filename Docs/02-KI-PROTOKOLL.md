@@ -24,5 +24,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-13 | Frage, wie das Projekt-Board (GitHub Projects) eingerichtet wird; Link zum Board im Backlog ergänzt.                                                                                       |
 | 2026-10-13 | Wunsch, automatisch eingefügte KI-Hinweise in Issues und Pull Requests zu entfernen.                                                                                                  |
 | 2026-10-15 | Auftrag: mit US-02 (Sichtbarkeit öffentlich/privat) weitermachen.                                                                                                                     |
+| 2026-10-15 | Auftrag: mit US-03 (Meet-Liste) weitermachen.                                                                                                                                         |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*
