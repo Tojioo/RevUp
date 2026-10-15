@@ -1,3 +1,5 @@
+using RevUp.Models;
+
 namespace RevUp.Services;
 
 /// <summary>A meet as the public list shows it. Deliberately has no location, so the list can never reveal it.</summary>
@@ -10,4 +12,20 @@ public sealed record MeetListItem(
 	string VisibilityLabel,
 	string LocationHint,
 	int AttendeeCount,
-	int MaxAttendees);
+	int MaxAttendees)
+{
+	public static MeetListItem From(Meet meet)
+	{
+		var policy = JoinPolicies.For(meet);
+		return new MeetListItem(
+			meet.Id,
+			meet.Title,
+			meet.Theme,
+			MeetTimeWindow.Format(meet),
+			meet.IsPublic,
+			policy.Label,
+			policy.LocationHint,
+			meet.AttendeeCount,
+			meet.MaxAttendees);
+	}
+}
