@@ -67,6 +67,19 @@
             </div>
         </section>
 
+        <section>
+            <p class="section-label">Sichtbarkeit</p>
+            <div class="segmented" role="radiogroup" aria-label="Sichtbarkeit">
+                <button type="button" role="radio" class="segment @(_draft.IsPublic ? "active" : "")" aria-checked="@(_draft.IsPublic ? "true" : "false")" @onclick="() => _draft.IsPublic = true">Öffentlich</button>
+                <button type="button" role="radio" class="segment @(_draft.IsPublic ? "" : "active")" aria-checked="@(_draft.IsPublic ? "false" : "true")" @onclick="() => _draft.IsPublic = false">Privat</button>
+            </div>
+            <p class="hint">
+                @(_draft.IsPublic
+                    ? "Wer beitritt, sieht den Ort sofort."
+                    : "Du nimmst jede Anfrage an oder lehnst sie ab. Erst danach sieht die Person den Ort.")
+            </p>
+        </section>
+
         <button type="submit" class="btn-primary">Meet erstellen</button>
     </div>
 </EditForm>
