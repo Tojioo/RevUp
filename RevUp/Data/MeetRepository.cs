@@ -13,6 +13,10 @@ public sealed class MeetRepository(DataOptions options) : IMeetRepository
 		return await db.Meets.ToListAsync(cancellationToken);
 	}
 
+	public Task<Meet?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public Task UpdateAsync(Meet meet, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
 	public async Task AddAsync(Meet meet, CancellationToken cancellationToken = default)
 	{
 		await using var db = new RevUpDataConnection(options);

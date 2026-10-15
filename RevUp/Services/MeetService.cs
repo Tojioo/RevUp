@@ -16,6 +16,10 @@ public class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetServi
 			.ToList();
 	}
 
+	public Task<MeetDetails?> GetMeetDetailsAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public Task<JoinResult> JoinAsync(Guid id, string participantName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
 		var errors = MeetDraftValidator.Validate(draft, clock.GetLocalNow().DateTime);
