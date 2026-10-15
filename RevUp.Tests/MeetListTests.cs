@@ -26,7 +26,8 @@ public class MeetListTests
 	[Fact]
 	public async Task MeetsAreSortedBySoonestStart()
 	{
-		foreach (var daysAhead in new[] { 3, 1, 2 })
+		int[] daysAheadOutOfOrder = [3, 1, 2];
+		foreach (var daysAhead in daysAheadOutOfOrder)
 		{
 			var draft = MeetDrafts.Valid();
 			draft.Title = $"In {daysAhead} Tagen";
