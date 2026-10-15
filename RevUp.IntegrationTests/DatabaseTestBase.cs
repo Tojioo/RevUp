@@ -9,9 +9,16 @@ public abstract class DatabaseTestBase : IAsyncLifetime
 {
 	private readonly string _databasePath = Path.Combine(Path.GetTempPath(), $"revup-test-{Guid.NewGuid():N}.db");
 
-	protected DataOptions Options { get; private set; } = null!;
+	// Because a DataConnection only opens on first use, it can exist before InitializeAsync has copied the file.
+	protected DatabaseTestBase()
+	{
+		Options = RevUpDatabase.CreateOptions($"Data Source={_databasePath}");
+		Context = new RevUpDataConnection(Options);
+	}
 
-	protected RevUpDataConnection Context { get; private set; } = null!;
+	protected DataOptions Options { get; }
+
+	protected RevUpDataConnection Context { get; }
 
 	public async Task InitializeAsync()
 	{
@@ -21,17 +28,11 @@ public abstract class DatabaseTestBase : IAsyncLifetime
 			await using var copy = File.Create(_databasePath);
 			await snapshot.CopyToAsync(copy);
 		}
-
-		Options = RevUpDatabase.CreateOptions($"Data Source={_databasePath}");
-		Context = new RevUpDataConnection(Options);
 	}
 
 	public async Task DisposeAsync()
 	{
-		if (Context is not null)
-		{
-			await Context.DisposeAsync();
-		}
+		await Context.DisposeAsync();
 
 		// Because pooled SQLite connections keep the file open, which would make the delete fail.
 		SqliteConnection.ClearAllPools();

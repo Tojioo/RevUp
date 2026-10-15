@@ -1,0 +1,109 @@
+@page "/meets/{Id:guid}"
+@rendermode InteractiveServer
+@inject IMeetService MeetService
+
+<PageTitle>@(_details?.Title ?? "Meet") – RevUp</PageTitle>
+
+<div class="subheader">
+    <a class="back-btn" href="meets" aria-label="Zurück zu Entdecken"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+    <span class="subheader-title">Entdecken</span>
+</div>
+
+@if (_loaded && _details is null)
+{
+    <p class="empty-state">Dieses Meet gibt es nicht mehr.</p>
+}
+else if (_details is not null)
+{
+    <div class="badge-row">
+        <span class="badge @(_details.IsPublic ? "badge-public" : "badge-private")">@_details.VisibilityLabel</span>
+        <span class="badge badge-theme">@_details.Theme</span>
+    </div>
+
+    <h1 class="hero-title">@_details.Title</h1>
+
+    @if (_location is null)
+    {
+        <p class="status-pill status-warning"><i class="fa-solid fa-lock" aria-hidden="true"></i> Standort verborgen bis @(_details.IsPublic ? "Beitritt" : "Freigabe")</p>
+    }
+    else
+    {
+        <p class="status-pill status-success"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Standort sichtbar</p>
+    }
+
+    <ul class="detail-meta-list">
+        <li class="detail-meta-row"><i class="fa-regular fa-calendar" aria-hidden="true"></i> @_details.TimeWindow</li>
+        <li class="detail-meta-row"><i class="fa-solid fa-users" aria-hidden="true"></i> <span><b>@_details.AttendeeCount / @_details.MaxAttendees</b> Plätze belegt</span></li>
+        <li class="detail-meta-row"><i class="fa-solid fa-user" aria-hidden="true"></i> Veranstaltet von @_details.OrganizerName</li>
+        <li class="detail-meta-row"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> Max. @_details.MaxVolumeDb dB</li>
+    </ul>
+
+    @if (_location is not null)
+    {
+        <div class="location-box">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span>@_location</span>
+        </div>
+        <div class="btn-static">Beigetreten</div>
+    }
+    else if (_details.IsPublic)
+    {
+        <div class="map-box" aria-hidden="true"><i class="fa-solid fa-lock"></i></div>
+        <form class="join-form" @onsubmit="JoinAsync">
+            <div class="field-group">
+                <label class="field-row">
+                    <span class="field-label">Dein Name</span>
+                    <input class="field-input" @bind="_name" placeholder="Wie sollen dich die anderen nennen?" autocomplete="name" maxlength="40" />
+                </label>
+            </div>
+            @if (_message is not null)
+            {
+                <p class="validation-message" role="alert">@_message</p>
+            }
+            <button type="submit" class="btn-primary" disabled="@(_busy || IsFull)">@(IsFull ? "Ausgebucht" : "Beitreten")</button>
+        </form>
+    }
+    else
+    {
+        <div class="map-box" aria-hidden="true"><i class="fa-solid fa-lock"></i></div>
+        <p class="hint">Bei privaten Meets entscheidet der Veranstalter über jede Anfrage.</p>
+        <div class="btn-static">Anfrage stellen</div>
+    }
+}
+
+@code {
+    private MeetDetails? _details;
+    private bool _loaded;
+    private string _name = string.Empty;
+    private string? _location;
+    private string? _message;
+    private bool _busy;
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool IsFull => _details is not null && _details.AttendeeCount >= _details.MaxAttendees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _details = await MeetService.GetMeetDetailsAsync(Id);
+        _loaded = true;
+    }
+
+    private async Task JoinAsync()
+    {
+        _busy = true;
+        _message = null;
+        var result = await MeetService.JoinAsync(Id, _name);
+        _location = result.Location;
+        _message = result.Status switch
+        {
+            JoinStatus.Full => "Dieses Meet ist leider ausgebucht.",
+            JoinStatus.InvalidName => "Bitte gib deinen Namen an (höchstens 40 Zeichen).",
+            JoinStatus.NotFound => "Dieses Meet gibt es nicht mehr.",
+            _ => null,
+        };
+        _details = await MeetService.GetMeetDetailsAsync(Id);
+        _busy = false;
+    }
+}

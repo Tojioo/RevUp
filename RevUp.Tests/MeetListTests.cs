@@ -4,13 +4,15 @@ using RevUp.Services;
 
 namespace RevUp.Tests;
 
-public class MeetListTests
+public sealed class MeetListTests : IDisposable
 {
 	private readonly FakeTimeProvider _clock = new(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero));
 	private readonly FakeMeetRepository _repository = new();
 	private readonly MeetService _service;
 
 	public MeetListTests() => _service = new MeetService(_repository, _clock);
+
+	public void Dispose() => _service.Dispose();
 
 	[Fact]
 	public async Task MeetsThatHaveEndedAreNotListed()
@@ -26,7 +28,8 @@ public class MeetListTests
 	[Fact]
 	public async Task MeetsAreSortedBySoonestStart()
 	{
-		foreach (var daysAhead in new[] { 3, 1, 2 })
+		int[] daysAheadOutOfOrder = [3, 1, 2];
+		foreach (var daysAhead in daysAheadOutOfOrder)
 		{
 			var draft = MeetDrafts.Valid();
 			draft.Title = $"In {daysAhead} Tagen";

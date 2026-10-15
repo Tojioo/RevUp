@@ -1,3 +1,5 @@
+using RevUp.Models;
+
 namespace RevUp.Services;
 
 public sealed class PrivateJoinPolicy : IJoinPolicy
@@ -7,4 +9,6 @@ public sealed class PrivateJoinPolicy : IJoinPolicy
 	public bool RequiresApproval => true;
 
 	public string LocationHint => "Ort nach Freigabe";
+
+	public JoinResult Join(Meet meet, string participantName) => new(JoinStatus.RequestPending);
 }

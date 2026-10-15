@@ -45,4 +45,29 @@ public class MeetRepositoryTests : DatabaseTestBase
 		var stored = await Context.Meets.SingleAsync(candidate => candidate.Id == meet.Id);
 		Assert.Equivalent(meet, stored);
 	}
+
+	[Fact]
+	public async Task AMeetIsFoundByItsId()
+	{
+		var repository = new MeetRepository(Options);
+		var expected = (await repository.GetAllAsync())[0];
+
+		var found = await repository.GetByIdAsync(expected.Id);
+
+		Assert.Equivalent(expected, found);
+		Assert.Null(await repository.GetByIdAsync(Guid.NewGuid()));
+	}
+
+	[Fact]
+	public async Task AnUpdatedAttendeeListIsStored()
+	{
+		var repository = new MeetRepository(Options);
+		var meet = (await repository.GetAllAsync())[0];
+		meet.AttendeeNames.Add("Noah");
+
+		await repository.UpdateAsync(meet);
+
+		var stored = await Context.Meets.SingleAsync(candidate => candidate.Id == meet.Id);
+		Assert.Equal(meet.AttendeeNames, stored.AttendeeNames);
+	}
 }

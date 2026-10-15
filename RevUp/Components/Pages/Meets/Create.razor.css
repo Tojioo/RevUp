@@ -1,73 +1,7 @@
-.page-title {
-    font-size: 34px;
-    margin-bottom: 16px;
-}
-
 .form {
     display: flex;
     flex-direction: column;
     gap: 22px;
-}
-
-.section-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin: 0 0 8px 2px;
-}
-
-.field-group {
-    background: var(--surface1);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-}
-
-.field-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-}
-
-.field-row:last-child {
-    border-bottom: none;
-}
-
-.field-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-}
-
-/* 16px keeps iOS Safari from zooming into the field on focus. */
-.field-row ::deep .field-input {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 16px;
-    color-scheme: dark;
-}
-
-.field-row ::deep .field-input::placeholder {
-    color: var(--text-dim);
-    opacity: 0.6;
-}
-
-.field-row ::deep .field-input:focus {
-    outline: none;
-}
-
-.field-row:focus-within {
-    background: rgba(0, 219, 172, 0.06);
 }
 
 .limits {
@@ -105,31 +39,4 @@
 .segment:focus-visible {
     outline: 2px solid var(--text);
     outline-offset: 2px;
-}
-
-.hint {
-    margin: 8px 2px 0;
-    color: var(--text-dim);
-    font-size: 13px;
-}
-
-.btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 52px;
-    border: none;
-    border-radius: 14px;
-    background: var(--accent);
-    color: var(--bg);
-    font-family: var(--font-body);
-    font-weight: 800;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.btn-primary:focus-visible {
-    outline: 2px solid var(--text);
-    outline-offset: 3px;
 }
