@@ -22,13 +22,17 @@ else if (_details is not null)
 
     <h1 class="hero-title">@_details.Title</h1>
 
-    @if (_location is null)
+    @if (_location is not null)
     {
-        <p class="status-pill status-warning"><i class="fa-solid fa-lock" aria-hidden="true"></i> Standort verborgen bis @(_details.IsPublic ? "Beitritt" : "Freigabe")</p>
+        <p class="status-pill status-success"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Standort sichtbar</p>
+    }
+    else if (_requested)
+    {
+        <p class="status-pill status-info"><i class="fa-regular fa-clock" aria-hidden="true"></i> Anfrage gesendet, wartet auf Bestätigung</p>
     }
     else
     {
-        <p class="status-pill status-success"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Standort sichtbar</p>
+        <p class="status-pill status-warning"><i class="fa-solid fa-lock" aria-hidden="true"></i> Standort verborgen bis @(_details.IsPublic ? "Beitritt" : "Freigabe")</p>
     }
 
     <ul class="detail-meta-list">
@@ -46,9 +50,18 @@ else if (_details is not null)
         </div>
         <div class="btn-static">Beigetreten</div>
     }
-    else if (_details.IsPublic)
+    else if (_requested)
+    {
+        <div class="map-box" aria-hidden="true"><i class="fa-regular fa-clock"></i></div>
+        <div class="btn-static">Anfrage gesendet</div>
+    }
+    else
     {
         <div class="map-box" aria-hidden="true"><i class="fa-solid fa-lock"></i></div>
+        @if (!_details.IsPublic)
+        {
+            <p class="hint">Bei privaten Meets entscheidet der Veranstalter über jede Anfrage. Erst danach siehst du den Ort.</p>
+        }
         <form class="join-form" @onsubmit="JoinAsync">
             <div class="field-group">
                 <label class="field-row">
@@ -60,14 +73,13 @@ else if (_details is not null)
             {
                 <p class="validation-message" role="alert">@_message</p>
             }
-            <button type="submit" class="btn-primary" disabled="@(_busy || IsFull)">@(IsFull ? "Ausgebucht" : "Beitreten")</button>
+            <button type="submit" class="btn-primary" disabled="@(_busy || IsFull)">@JoinLabel</button>
         </form>
     }
-    else
+
+    @if (!_details.IsPublic)
     {
-        <div class="map-box" aria-hidden="true"><i class="fa-solid fa-lock"></i></div>
-        <p class="hint">Bei privaten Meets entscheidet der Veranstalter über jede Anfrage.</p>
-        <div class="btn-static">Anfrage stellen</div>
+        <a class="organizer-link" href="meets/@Id/anfragen"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Anfragen verwalten (Veranstalter)</a>
     }
 }
 
@@ -78,11 +90,14 @@ else if (_details is not null)
     private string? _location;
     private string? _message;
     private bool _busy;
+    private bool _requested;
 
     [Parameter]
     public Guid Id { get; set; }
 
     private bool IsFull => _details is not null && _details.AttendeeCount >= _details.MaxAttendees;
+
+    private string JoinLabel => IsFull ? "Ausgebucht" : _details is { IsPublic: true } ? "Beitreten" : "Anfrage stellen";
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,6 +111,7 @@ else if (_details is not null)
         _message = null;
         var result = await MeetService.JoinAsync(Id, _name);
         _location = result.Location;
+        _requested = result.Status == JoinStatus.RequestPending;
         _message = result.Status switch
         {
             JoinStatus.Full => "Dieses Meet ist leider ausgebucht.",

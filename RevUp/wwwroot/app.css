@@ -217,3 +217,30 @@ button {
     outline: 2px solid var(--text);
     outline-offset: 3px;
 }
+
+.subheader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.subheader-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.back-btn {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 12px;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
