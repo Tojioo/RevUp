@@ -14,6 +14,10 @@ public sealed record MeetListItem(
 	int AttendeeCount,
 	int MaxAttendees)
 {
+	public int FreeSeats => throw new NotImplementedException();
+
+	public string SeatsLabel => throw new NotImplementedException();
+
 	public static MeetListItem From(Meet meet)
 	{
 		var policy = JoinPolicies.For(meet);
