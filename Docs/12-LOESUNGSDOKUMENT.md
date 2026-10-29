@@ -192,7 +192,7 @@ Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetR
 
 ![Board am Ende von Sprint 1](Sprints/sprint-1-board.png)
 
-**Sprint 2 (30.10.):** US-10 (freie Plätze) sowie Retrospektive, SOLID-Beurteilung und Abgabe.
+**Sprint 2 (30.10. – 01.11.):** US-07 bis US-10 sowie Retrospektive, SOLID-Beurteilung und Abgabe. Die Abgabe wurde wegen der Krankheit mit der Lehrperson auf den 02.11.2026 verschoben.
 
 ## 6 Retrospektive (Aufgaben 5-1, 5-2)
 
