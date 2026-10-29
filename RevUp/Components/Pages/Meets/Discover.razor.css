@@ -96,3 +96,7 @@
 .meet-link:hover .meet-card {
     border-color: var(--surface2);
 }
+
+.meta-item.seats-full {
+    color: var(--warning);
+}

@@ -40,7 +40,7 @@ else if (_details is not null)
 
     <ul class="detail-meta-list">
         <li class="detail-meta-row"><i class="fa-regular fa-calendar" aria-hidden="true"></i> @_details.TimeWindow</li>
-        <li class="detail-meta-row"><i class="fa-solid fa-users" aria-hidden="true"></i> <span><b>@_details.AttendeeCount / @_details.MaxAttendees</b> Plätze belegt</span></li>
+        <li class="detail-meta-row @(_details.FreeSeats == 0 ? "seats-full" : "")"><i class="fa-solid fa-users" aria-hidden="true"></i> <span><b>@_details.AttendeeCount / @_details.MaxAttendees</b> belegt · @_details.SeatsLabel</span></li>
         <li class="detail-meta-row"><i class="fa-solid fa-user" aria-hidden="true"></i> Veranstaltet von @_details.OrganizerName</li>
         <li class="detail-meta-row"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> Max. @_details.MaxVolumeDb dB</li>
     </ul>
@@ -98,7 +98,7 @@ else if (_details is not null)
     [Parameter]
     public Guid Id { get; set; }
 
-    private bool IsFull => _details is not null && _details.AttendeeCount >= _details.MaxAttendees;
+    private bool IsFull => _details is { FreeSeats: 0 };
 
     private string JoinLabel => IsFull ? "Ausgebucht" : _details is { IsPublic: true } ? "Beitreten" : "Anfrage stellen";
 

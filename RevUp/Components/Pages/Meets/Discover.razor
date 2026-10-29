@@ -47,7 +47,7 @@ else
                     </div>
 
                     <div class="meet-foot">
-                        <span class="meta-item"><i class="fa-solid fa-users" aria-hidden="true"></i> @meet.AttendeeCount/@meet.MaxAttendees</span>
+                        <span class="meta-item @(meet.FreeSeats == 0 ? "seats-full" : "")"><i class="fa-solid fa-users" aria-hidden="true"></i> @meet.AttendeeCount/@meet.MaxAttendees · @meet.SeatsLabel</span>
                     </div>
                 </article>
             </a>
