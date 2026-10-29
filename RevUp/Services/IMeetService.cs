@@ -12,5 +12,8 @@ public interface IMeetService
 
 	Task<JoinResult> JoinAsync(Guid id, string participantName, CancellationToken cancellationToken = default);
 
+	/// <summary>Open requests for a meet, oldest first.</summary>
+	Task<IReadOnlyList<JoinRequestItem>> GetPendingRequestsAsync(Guid meetId, CancellationToken cancellationToken = default);
+
 	Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default);
 }

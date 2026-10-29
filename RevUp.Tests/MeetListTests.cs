@@ -8,9 +8,10 @@ public sealed class MeetListTests : IDisposable
 {
 	private readonly FakeTimeProvider _clock = new(new DateTimeOffset(MeetDrafts.Now, TimeSpan.Zero));
 	private readonly FakeMeetRepository _repository = new();
+	private readonly FakeJoinRequestRepository _requests = new();
 	private readonly MeetService _service;
 
-	public MeetListTests() => _service = new MeetService(_repository, _clock);
+	public MeetListTests() => _service = new MeetService(_repository, _requests, _clock);
 
 	public void Dispose() => _service.Dispose();
 

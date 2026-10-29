@@ -3,7 +3,7 @@ using RevUp.Models;
 
 namespace RevUp.Services;
 
-public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetService, IDisposable
+public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository requests, TimeProvider clock) : IMeetService, IDisposable
 {
 	private const int _maxNameLength = 40;
 
@@ -56,6 +56,8 @@ public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMe
 			_joinLock.Release();
 		}
 	}
+
+	public Task<IReadOnlyList<JoinRequestItem>> GetPendingRequestsAsync(Guid meetId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
