@@ -32,5 +32,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Abgabetermin (01.11.) und Masterplan geteilt; Sprint 1 endet am 29.10., Sprint 2 am 30.10. Priorisierung: US-05/US-06 mit Observer, danach SOLID, Retrospektive und Abgabe. |
 | 2026-10-29 | Auftrag: mit US-05 (Beitrittsanfrage für privates Meet) weitermachen.                                                                                                                   |
 | 2026-10-29 | Auftrag: US-06 (Anfragen annehmen/ablehnen) mit dem Observer-Pattern für Live-Aktualisierung umsetzen.                                                                       |
+| 2026-10-29 | Entscheid: nicht bewertungsrelevante Stories (Konten, P2/P3 ausser US-10) in den Meilenstein «Nach der LB» verschieben; Sprint 1 abschliessen.                         |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

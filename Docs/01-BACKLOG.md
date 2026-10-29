@@ -9,9 +9,9 @@
 | 1     | Projektidee & Team       | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> [README.md](../README.md) |
 | 2     | Vision & Product Backlog | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> dieses Dokument           |
 | 3     | Technisches Fundament    | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> CI, Vorlagen, Story-IDs, Vorgehen (siehe unten) |
-| 4     | Sprint 1 (US-01 – US-06, US-17 – US-19) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen |
-| 5     | Sprint 2 (US-07 – US-10) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen |
-| 6     | Sprint 3 (US-11 – US-12) | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> offen, optional |
+| 4     | Sprint 1 (bis 29.10.)    | <span style="color: green; font-weight: bold;">&#x2611;&#xFE0E;</span> US-01 – US-06, T-01 – T-03; Konten (US-17 – US-19) bewusst verschoben |
+| 5     | Sprint 2 (30.10.)        | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> US-10, Review, Retrospektive, SOLID-Beurteilung, Abgabe |
+| 6     | Nach der LB              | <span style="color: red; font-weight: bold;">&#x2612;&#xFE0E;</span> US-07 – US-09, US-11, US-12, US-17 – US-19 |
 
 ## User Stories (MVP)
 
