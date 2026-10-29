@@ -29,5 +29,7 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-15 | Vorgaben aus einer separaten Sitzung übernommen (Listen-Icons, Persistenz mit linq2db/SQLite, async, Basisklassen, Unit- und Integrationstests); als technische Aufgaben T-01 bis T-03 erfasst. |
 | 2026-10-15 | Rider-Hinweise in den Testprojekten beheben; danach mit US-04 (öffentlichem Meet beitreten) weitermachen.                                                                            |
 | 2026-10-15 | Frage, ob Konten wie in einem anderen eigenen Projekt (UtilityTools) eingeführt werden sollen; Entscheid für eine schlanke Variante (US-17 – US-19), Zwei-Faktor und Passkeys als Stretch (US-20). |
+| 2026-10-29 | Abgabetermin (01.11.) und Masterplan geteilt; Sprint 1 endet am 29.10., Sprint 2 am 30.10. Priorisierung: US-05/US-06 mit Observer, danach SOLID, Retrospektive und Abgabe. |
+| 2026-10-29 | Auftrag: mit US-05 (Beitrittsanfrage für privates Meet) weitermachen.                                                                                                                   |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

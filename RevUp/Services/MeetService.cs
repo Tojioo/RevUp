@@ -3,7 +3,7 @@ using RevUp.Models;
 
 namespace RevUp.Services;
 
-public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMeetService, IDisposable
+public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository requests, TimeProvider clock) : IMeetService, IDisposable
 {
 	private const int _maxNameLength = 40;
 
@@ -44,9 +44,14 @@ public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMe
 			}
 
 			var result = JoinPolicies.For(meet).Join(meet, participantName);
-			if (result.Status == JoinStatus.Joined)
+			switch (result.Status)
 			{
-				await meets.UpdateAsync(meet, cancellationToken);
+				case JoinStatus.Joined:
+					await meets.UpdateAsync(meet, cancellationToken);
+					break;
+				case JoinStatus.RequestPending:
+					await AddRequestOnceAsync(meet.Id, participantName.Trim(), cancellationToken);
+					break;
 			}
 
 			return result;
@@ -55,6 +60,16 @@ public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMe
 		{
 			_joinLock.Release();
 		}
+	}
+
+	public async Task<IReadOnlyList<JoinRequestItem>> GetPendingRequestsAsync(Guid meetId, CancellationToken cancellationToken = default)
+	{
+		var all = await requests.GetForMeetAsync(meetId, cancellationToken);
+		return all
+			.Where(request => request.Status == RequestStatus.Pending)
+			.OrderBy(request => request.CreatedAt)
+			.Select(request => new JoinRequestItem(request.Id, request.ParticipantName, request.CreatedAt))
+			.ToList();
 	}
 
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
@@ -88,4 +103,21 @@ public sealed class MeetService(IMeetRepository meets, TimeProvider clock) : IMe
 	// Assumption: a meet without an end (Open End) is over once its start day has passed.
 	private static bool HasEnded(Meet meet, DateTime now) =>
 		meet.EndTime is { } end ? end <= now : meet.StartTime.Date < now.Date;
+
+	private async Task AddRequestOnceAsync(Guid meetId, string participantName, CancellationToken cancellationToken)
+	{
+		var existing = await requests.GetForMeetAsync(meetId, cancellationToken);
+		if (existing.Any(request => string.Equals(request.ParticipantName, participantName, StringComparison.OrdinalIgnoreCase)))
+		{
+			return;
+		}
+
+		var request = new JoinRequest
+		{
+			MeetId = meetId,
+			ParticipantName = participantName,
+			CreatedAt = clock.GetLocalNow().DateTime,
+		};
+		await requests.AddAsync(request, cancellationToken);
+	}
 }

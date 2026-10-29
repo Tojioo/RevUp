@@ -23,6 +23,7 @@ public static class Program
 		builder.Services.AddSingleton(TimeProvider.System);
 		builder.Services.AddSingleton(databaseOptions);
 		builder.Services.AddSingleton<IMeetRepository, MeetRepository>();
+		builder.Services.AddSingleton<IJoinRequestRepository, JoinRequestRepository>();
 		builder.Services.AddSingleton<IMeetService, MeetService>();
 
 		var app = builder.Build();

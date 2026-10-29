@@ -1,0 +1,54 @@
+@page "/meets/{Id:guid}/anfragen"
+@rendermode InteractiveServer
+@inject IMeetService MeetService
+
+<PageTitle>Anfragen – RevUp</PageTitle>
+
+<div class="subheader">
+    <a class="back-btn" href="meets/@Id" aria-label="Zurück zum Meet"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+    <span class="subheader-title">@(_details?.Title ?? "Meet")</span>
+</div>
+
+<h1 class="page-title">Anfragen</h1>
+
+@if (_loaded && _details is null)
+{
+    <p class="empty-state">Dieses Meet gibt es nicht mehr.</p>
+}
+else if (_details is not null)
+{
+    <p class="hint">@_details.AttendeeCount / @_details.MaxAttendees Plätze belegt</p>
+
+    @if (_pending.Count == 0)
+    {
+        <p class="empty-state">Keine offenen Anfragen.</p>
+    }
+    else
+    {
+        <ul class="request-list">
+            @foreach (var request in _pending)
+            {
+                <li class="request-row" @key="request.Id">
+                    <span class="request-name">@request.ParticipantName</span>
+                    <span class="request-time">seit @request.CreatedAt.ToString("HH:mm", System.Globalization.CultureInfo.GetCultureInfo("de-CH"))</span>
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private MeetDetails? _details;
+    private IReadOnlyList<JoinRequestItem> _pending = [];
+    private bool _loaded;
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _details = await MeetService.GetMeetDetailsAsync(Id);
+        _pending = await MeetService.GetPendingRequestsAsync(Id);
+        _loaded = true;
+    }
+}
