@@ -29,11 +29,14 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 
 	public async Task<JoinResult> JoinAsync(Guid id, string participantName, CancellationToken cancellationToken = default)
 	{
-		if (participantName.Trim().Length is 0 or > _maxNameLength)
+		var name = participantName.Trim();
+		if (name.Length is 0 or > _maxNameLength)
 		{
 			return new JoinResult(JoinStatus.InvalidName);
 		}
 
+		JoinResult result;
+		var changed = false;
 		await _joinLock.WaitAsync(cancellationToken);
 		try
 		{
@@ -43,23 +46,53 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 				return new JoinResult(JoinStatus.NotFound);
 			}
 
-			var result = JoinPolicies.For(meet).Join(meet, participantName);
-			switch (result.Status)
-			{
-				case JoinStatus.Joined:
-					await meets.UpdateAsync(meet, cancellationToken);
-					break;
-				case JoinStatus.RequestPending:
-					await AddRequestOnceAsync(meet.Id, participantName.Trim(), cancellationToken);
-					break;
-			}
-
-			return result;
+			(result, changed) = await ApplyJoinAsync(meet, JoinPolicies.For(meet).Join(meet, name), name, cancellationToken);
 		}
 		finally
 		{
 			_joinLock.Release();
 		}
+
+		// Notified only after the lock is released, because observers may call back into this service.
+		if (changed)
+		{
+			await notifier.NotifyAsync(id);
+		}
+
+		return result;
+	}
+
+	public async Task<DecisionStatus> DecideAsync(Guid requestId, bool approve, CancellationToken cancellationToken = default)
+	{
+		DecisionStatus decision;
+		Guid meetId;
+		await _joinLock.WaitAsync(cancellationToken);
+		try
+		{
+			var request = await requests.GetByIdAsync(requestId, cancellationToken);
+			var meet = request is { Status: RequestStatus.Pending } ? await meets.GetByIdAsync(request.MeetId, cancellationToken) : null;
+			if (request is null || meet is null)
+			{
+				return DecisionStatus.NotFound;
+			}
+
+			decision = approve ? await ApproveAsync(meet, request, cancellationToken) : DecisionStatus.Rejected;
+			if (decision == DecisionStatus.Full)
+			{
+				return decision;
+			}
+
+			request.Status = decision == DecisionStatus.Approved ? RequestStatus.Approved : RequestStatus.Rejected;
+			await requests.UpdateAsync(request, cancellationToken);
+			meetId = meet.Id;
+		}
+		finally
+		{
+			_joinLock.Release();
+		}
+
+		await notifier.NotifyAsync(meetId);
+		return decision;
 	}
 
 	public async Task<IReadOnlyList<JoinRequestItem>> GetPendingRequestsAsync(Guid meetId, CancellationToken cancellationToken = default)
@@ -71,8 +104,6 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 			.Select(request => new JoinRequestItem(request.Id, request.ParticipantName, request.CreatedAt))
 			.ToList();
 	}
-
-	public Task<DecisionStatus> DecideAsync(Guid requestId, bool approve, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
@@ -97,6 +128,7 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 		};
 
 		await meets.AddAsync(meet, cancellationToken);
+		await notifier.NotifyAsync(meet.Id);
 		return new MeetCreationResult(meet, []);
 	}
 
@@ -106,20 +138,49 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 	private static bool HasEnded(Meet meet, DateTime now) =>
 		meet.EndTime is { } end ? end <= now : meet.StartTime.Date < now.Date;
 
-	private async Task AddRequestOnceAsync(Guid meetId, string participantName, CancellationToken cancellationToken)
+	private async Task<(JoinResult Result, bool Changed)> ApplyJoinAsync(Meet meet, JoinResult result, string name, CancellationToken cancellationToken)
 	{
-		var existing = await requests.GetForMeetAsync(meetId, cancellationToken);
-		if (existing.Any(request => string.Equals(request.ParticipantName, participantName, StringComparison.OrdinalIgnoreCase)))
+		if (result.Status == JoinStatus.Joined)
 		{
-			return;
+			await meets.UpdateAsync(meet, cancellationToken);
+			return (result, true);
+		}
+
+		if (result.Status != JoinStatus.RequestPending)
+		{
+			return (result, false);
+		}
+
+		var existing = (await requests.GetForMeetAsync(meet.Id, cancellationToken))
+			.FirstOrDefault(request => string.Equals(request.ParticipantName, name, StringComparison.OrdinalIgnoreCase));
+		if (existing is not null)
+		{
+			return (existing.Status == RequestStatus.Rejected ? new JoinResult(JoinStatus.Rejected) : result, false);
 		}
 
 		var request = new JoinRequest
 		{
-			MeetId = meetId,
-			ParticipantName = participantName,
+			MeetId = meet.Id,
+			ParticipantName = name,
 			CreatedAt = clock.GetLocalNow().DateTime,
 		};
 		await requests.AddAsync(request, cancellationToken);
+		return (result, true);
+	}
+
+	private async Task<DecisionStatus> ApproveAsync(Meet meet, JoinRequest request, CancellationToken cancellationToken)
+	{
+		if (!meet.AttendeeNames.Contains(request.ParticipantName, StringComparer.OrdinalIgnoreCase))
+		{
+			if (meet.IsFull)
+			{
+				return DecisionStatus.Full;
+			}
+
+			meet.AttendeeNames.Add(request.ParticipantName);
+			await meets.UpdateAsync(meet, cancellationToken);
+		}
+
+		return DecisionStatus.Approved;
 	}
 }
