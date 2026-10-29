@@ -34,5 +34,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Auftrag: US-06 (Anfragen annehmen/ablehnen) mit dem Observer-Pattern für Live-Aktualisierung umsetzen.                                                                       |
 | 2026-10-29 | Entscheid: nicht bewertungsrelevante Stories (Konten, P2/P3 ausser US-10) in den Meilenstein «Nach der LB» verschieben; Sprint 1 abschliessen.                         |
 | 2026-10-29 | Auftrag: US-10 (freie Plätze) als eigene Story umsetzen.                                                                                                                      |
+| 2026-10-29 | Auftrag: US-07 (Filter nach Thema, kombinierbar mit öffentlich/privat) umsetzen.                                                                                         |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*
