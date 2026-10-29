@@ -3,7 +3,7 @@ using RevUp.Models;
 
 namespace RevUp.Services;
 
-public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository requests, TimeProvider clock) : IMeetService, IDisposable
+public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository requests, MeetChangeNotifier notifier, TimeProvider clock) : IMeetService, IDisposable
 {
 	private const int _maxNameLength = 40;
 
@@ -71,6 +71,8 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 			.Select(request => new JoinRequestItem(request.Id, request.ParticipantName, request.CreatedAt))
 			.ToList();
 	}
+
+	public Task<DecisionStatus> DecideAsync(Guid requestId, bool approve, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
 	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{

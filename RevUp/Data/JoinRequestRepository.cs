@@ -12,6 +12,10 @@ public sealed class JoinRequestRepository(DataOptions options) : IJoinRequestRep
 		return await db.JoinRequests.Where(request => request.MeetId == meetId).ToListAsync(cancellationToken);
 	}
 
+	public Task<JoinRequest?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public Task UpdateAsync(JoinRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
 	public async Task AddAsync(JoinRequest request, CancellationToken cancellationToken = default)
 	{
 		await using var db = new RevUpDataConnection(options);

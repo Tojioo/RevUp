@@ -23,4 +23,19 @@ public class JoinRequestRepositoryTests : DatabaseTestBase
 		Assert.Equivalent(request, Assert.Single(await repository.GetForMeetAsync(meets[0].Id)));
 		Assert.Empty(await repository.GetForMeetAsync(meets[1].Id));
 	}
+
+	[Fact]
+	public async Task ADecidedRequestIsFoundByIdWithItsNewStatus()
+	{
+		var meets = await Context.Meets.ToListAsync();
+		var request = new JoinRequest { MeetId = meets[0].Id, ParticipantName = "Noah" };
+		var repository = new JoinRequestRepository(Options);
+		await repository.AddAsync(request);
+		request.Status = RequestStatus.Approved;
+
+		await repository.UpdateAsync(request);
+
+		Assert.Equal(RequestStatus.Approved, (await repository.GetByIdAsync(request.Id))!.Status);
+		Assert.Null(await repository.GetByIdAsync(Guid.NewGuid()));
+	}
 }
