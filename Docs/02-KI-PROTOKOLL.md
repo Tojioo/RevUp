@@ -1,6 +1,6 @@
 # KI-Protokoll: RevUp (M426)
 
-*Dokument 2 von 11 · [← 01 Backlog](01-BACKLOG.md) · Weiter: [03 Konzept →](03-KONZEPT.md)*
+*Dokument 2 von 12 · [← 01 Backlog](01-BACKLOG.md) · Weiter: [03 Konzept →](03-KONZEPT.md)*
 
 Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die Antworten).
 
@@ -33,5 +33,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Auftrag: mit US-05 (Beitrittsanfrage für privates Meet) weitermachen.                                                                                                                   |
 | 2026-10-29 | Auftrag: US-06 (Anfragen annehmen/ablehnen) mit dem Observer-Pattern für Live-Aktualisierung umsetzen.                                                                       |
 | 2026-10-29 | Entscheid: nicht bewertungsrelevante Stories (Konten, P2/P3 ausser US-10) in den Meilenstein «Nach der LB» verschieben; Sprint 1 abschliessen.                         |
+| 2026-10-29 | Hinweis auf Krankheit (21.–27.10.); Auftrag: Lösungsdokument mit Patterns, Branches, TDD-Nachweis, SOLID-Beurteilung, Sprint-Reviews und Retrospektive entwerfen.             |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

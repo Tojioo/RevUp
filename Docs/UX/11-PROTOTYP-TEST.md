@@ -1,6 +1,6 @@
 # 6. Prototyp testen
 
-*Dokument 11 von 11 · [← 10 Wireframes](10-wireframes.html) · Weiter: [Prototyp (Hi-Fi) →](Prototype/README.md)*
+*Dokument 11 von 12 · [← 10 Wireframes](10-wireframes.html) · Weiter: [Prototyp (Hi-Fi) →](Prototype/README.md) · [12 Lösungsdokument →](../12-LOESUNGSDOKUMENT.md)*
 
 **Methode:** Leichtgewichtiger Selbsttest (Cognitive Walkthrough) anhand der Wireframes in [`10-wireframes.html`](10-wireframes.html), keine externen Testpersonen. Grenzen dieser Methode: als Entwickler ist man nie ein neutraler Testnutzer, blinde Flecken bleiben wahrscheinlich unentdeckt. Für den MVP-Rahmen ausreichend, siehe Abwägung im Chat-Verlauf zu diesem Dokument.
 
