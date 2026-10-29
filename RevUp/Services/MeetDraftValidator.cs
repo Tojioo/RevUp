@@ -44,13 +44,17 @@ public static class MeetDraftValidator
 			errors.Add(new ValidationError(nameof(MeetDraft.StartTime), "Der Start muss in der Zukunft liegen."));
 		}
 
-		if (draft.EndTime is not { } end)
+		switch (draft.TimeMode, draft.EndTime)
 		{
-			errors.Add(new ValidationError(nameof(MeetDraft.EndTime), _required));
-		}
-		else if (end <= draft.StartTime)
-		{
-			errors.Add(new ValidationError(nameof(MeetDraft.EndTime), "Das Ende muss nach dem Start liegen."));
+			case (TimeMode.OpenEnd, not null):
+				errors.Add(new ValidationError(nameof(MeetDraft.EndTime), "Bei Open End gibt es kein festes Ende."));
+				break;
+			case (TimeMode.Fixed, null):
+				errors.Add(new ValidationError(nameof(MeetDraft.EndTime), _required));
+				break;
+			case (_, { } end) when end <= draft.StartTime:
+				errors.Add(new ValidationError(nameof(MeetDraft.EndTime), "Das Ende muss nach dem Start liegen."));
+				break;
 		}
 	}
 
