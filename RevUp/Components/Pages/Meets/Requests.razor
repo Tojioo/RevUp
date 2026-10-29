@@ -1,6 +1,9 @@
 @page "/meets/{Id:guid}/anfragen"
 @rendermode InteractiveServer
 @inject IMeetService MeetService
+@inject IMeetSubject MeetChanges
+@implements IMeetObserver
+@implements IDisposable
 
 <PageTitle>Anfragen – RevUp</PageTitle>
 
@@ -19,6 +22,11 @@ else if (_details is not null)
 {
     <p class="hint">@_details.AttendeeCount / @_details.MaxAttendees Plätze belegt</p>
 
+    @if (_message is not null)
+    {
+        <p class="validation-message" role="alert">@_message</p>
+    }
+
     @if (_pending.Count == 0)
     {
         <p class="empty-state">Keine offenen Anfragen.</p>
@@ -31,6 +39,12 @@ else if (_details is not null)
                 <li class="request-row" @key="request.Id">
                     <span class="request-name">@request.ParticipantName</span>
                     <span class="request-time">seit @request.CreatedAt.ToString("HH:mm", System.Globalization.CultureInfo.GetCultureInfo("de-CH"))</span>
+                    <button type="button" class="decision-btn reject" aria-label="@($"{request.ParticipantName} ablehnen")" disabled="@_busy" @onclick="() => DecideAsync(request.Id, false)">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="decision-btn approve" aria-label="@($"{request.ParticipantName} annehmen")" disabled="@_busy" @onclick="() => DecideAsync(request.Id, true)">
+                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    </button>
                 </li>
             }
         </ul>
@@ -41,14 +55,59 @@ else if (_details is not null)
     private MeetDetails? _details;
     private IReadOnlyList<JoinRequestItem> _pending = [];
     private bool _loaded;
+    private bool _busy;
+    private string? _message;
 
     [Parameter]
     public Guid Id { get; set; }
 
+    public async Task OnMeetChangedAsync(Guid meetId)
+    {
+        if (meetId != Id)
+        {
+            return;
+        }
+
+        try
+        {
+            await InvokeAsync(async () =>
+            {
+                await LoadAsync();
+                StateHasChanged();
+            });
+        }
+        catch (ObjectDisposedException)
+        {
+            // Because a closed browser tab can be notified once more before Dispose detaches it.
+        }
+    }
+
+    public void Dispose() => MeetChanges.Detach(this);
+
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+        _loaded = true;
+        MeetChanges.Attach(this);
+    }
+
+    private async Task LoadAsync()
     {
         _details = await MeetService.GetMeetDetailsAsync(Id);
         _pending = await MeetService.GetPendingRequestsAsync(Id);
-        _loaded = true;
+    }
+
+    private async Task DecideAsync(Guid requestId, bool approve)
+    {
+        _busy = true;
+        var decision = await MeetService.DecideAsync(requestId, approve);
+        _message = decision switch
+        {
+            DecisionStatus.Full => "Das Meet ist voll. Gib zuerst einen Platz frei oder lehne die Anfrage ab.",
+            DecisionStatus.NotFound => "Diese Anfrage wurde bereits bearbeitet.",
+            _ => null,
+        };
+        await LoadAsync();
+        _busy = false;
     }
 }
