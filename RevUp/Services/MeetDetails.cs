@@ -16,9 +16,9 @@ public sealed record MeetDetails(
 	int AttendeeCount,
 	int MaxAttendees)
 {
-	public int FreeSeats => throw new NotImplementedException();
+	public int FreeSeats => Math.Max(0, MaxAttendees - AttendeeCount);
 
-	public string SeatsLabel => throw new NotImplementedException();
+	public string SeatsLabel => SeatLabel.For(FreeSeats);
 
 	public static MeetDetails From(Meet meet)
 	{
