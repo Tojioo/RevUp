@@ -15,5 +15,8 @@ public interface IMeetService
 	/// <summary>Open requests for a meet, oldest first.</summary>
 	Task<IReadOnlyList<JoinRequestItem>> GetPendingRequestsAsync(Guid meetId, CancellationToken cancellationToken = default);
 
+	/// <summary>Accepts or rejects an open request; an accepted participant then sees the location.</summary>
+	Task<DecisionStatus> DecideAsync(Guid requestId, bool approve, CancellationToken cancellationToken = default);
+
 	Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default);
 }

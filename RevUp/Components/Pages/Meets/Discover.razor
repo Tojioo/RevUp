@@ -2,6 +2,9 @@
 @page "/meets"
 @rendermode InteractiveServer
 @inject IMeetService MeetService
+@inject IMeetSubject MeetChanges
+@implements IMeetObserver
+@implements IDisposable
 
 <PageTitle>Entdecken – RevUp</PageTitle>
 
@@ -60,7 +63,31 @@ else
     private string _selectedTheme = AllThemes;
     private List<MeetListItem> _filteredMeets = [];
 
+    public async Task OnMeetChangedAsync(Guid meetId)
+    {
+        try
+        {
+            await InvokeAsync(async () =>
+            {
+                await LoadAsync();
+                StateHasChanged();
+            });
+        }
+        catch (ObjectDisposedException)
+        {
+            // Because a closed browser tab can be notified once more before Dispose detaches it.
+        }
+    }
+
+    public void Dispose() => MeetChanges.Detach(this);
+
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+        MeetChanges.Attach(this);
+    }
+
+    private async Task LoadAsync()
     {
         _meets = await MeetService.GetUpcomingMeetsAsync();
         _themes = [AllThemes, .. _meets.Select(meet => meet.Theme).Distinct().Order()];

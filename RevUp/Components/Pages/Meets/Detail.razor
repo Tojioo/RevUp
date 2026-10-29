@@ -1,6 +1,9 @@
 @page "/meets/{Id:guid}"
 @rendermode InteractiveServer
 @inject IMeetService MeetService
+@inject IMeetSubject MeetChanges
+@implements IMeetObserver
+@implements IDisposable
 
 <PageTitle>@(_details?.Title ?? "Meet") – RevUp</PageTitle>
 
@@ -99,17 +102,53 @@ else if (_details is not null)
 
     private string JoinLabel => IsFull ? "Ausgebucht" : _details is { IsPublic: true } ? "Beitreten" : "Anfrage stellen";
 
+    public async Task OnMeetChangedAsync(Guid meetId)
+    {
+        if (meetId != Id)
+        {
+            return;
+        }
+
+        try
+        {
+            await InvokeAsync(async () =>
+            {
+                _details = await MeetService.GetMeetDetailsAsync(Id);
+                if (_requested)
+                {
+                    // Because the organizer may just have decided on this request; asking again shows the outcome.
+                    ShowResult(await MeetService.JoinAsync(Id, _name));
+                }
+
+                StateHasChanged();
+            });
+        }
+        catch (ObjectDisposedException)
+        {
+            // Because a closed browser tab can be notified once more before Dispose detaches it.
+        }
+    }
+
+    public void Dispose() => MeetChanges.Detach(this);
+
     protected override async Task OnInitializedAsync()
     {
         _details = await MeetService.GetMeetDetailsAsync(Id);
         _loaded = true;
+        MeetChanges.Attach(this);
     }
 
     private async Task JoinAsync()
     {
         _busy = true;
         _message = null;
-        var result = await MeetService.JoinAsync(Id, _name);
+        ShowResult(await MeetService.JoinAsync(Id, _name));
+        _details = await MeetService.GetMeetDetailsAsync(Id);
+        _busy = false;
+    }
+
+    private void ShowResult(JoinResult result)
+    {
         _location = result.Location;
         _requested = result.Status == JoinStatus.RequestPending;
         _message = result.Status switch
@@ -117,9 +156,8 @@ else if (_details is not null)
             JoinStatus.Full => "Dieses Meet ist leider ausgebucht.",
             JoinStatus.InvalidName => "Bitte gib deinen Namen an (höchstens 40 Zeichen).",
             JoinStatus.NotFound => "Dieses Meet gibt es nicht mehr.",
+            JoinStatus.Rejected => "Der Veranstalter hat deine Anfrage abgelehnt.",
             _ => null,
         };
-        _details = await MeetService.GetMeetDetailsAsync(Id);
-        _busy = false;
     }
 }

@@ -24,6 +24,8 @@ public static class Program
 		builder.Services.AddSingleton(databaseOptions);
 		builder.Services.AddSingleton<IMeetRepository, MeetRepository>();
 		builder.Services.AddSingleton<IJoinRequestRepository, JoinRequestRepository>();
+		builder.Services.AddSingleton<MeetChangeNotifier>();
+		builder.Services.AddSingleton<IMeetSubject>(services => services.GetRequiredService<MeetChangeNotifier>());
 		builder.Services.AddSingleton<IMeetService, MeetService>();
 
 		var app = builder.Build();

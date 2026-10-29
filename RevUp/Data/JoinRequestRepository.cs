@@ -12,6 +12,18 @@ public sealed class JoinRequestRepository(DataOptions options) : IJoinRequestRep
 		return await db.JoinRequests.Where(request => request.MeetId == meetId).ToListAsync(cancellationToken);
 	}
 
+	public async Task<JoinRequest?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		await using var db = new RevUpDataConnection(options);
+		return await db.JoinRequests.FirstOrDefaultAsync(request => request.Id == id, cancellationToken);
+	}
+
+	public async Task UpdateAsync(JoinRequest request, CancellationToken cancellationToken = default)
+	{
+		await using var db = new RevUpDataConnection(options);
+		await db.UpdateAsync(request, token: cancellationToken);
+	}
+
 	public async Task AddAsync(JoinRequest request, CancellationToken cancellationToken = default)
 	{
 		await using var db = new RevUpDataConnection(options);

@@ -6,6 +6,7 @@ public enum JoinStatus
 	AlreadyJoined,
 	Full,
 	RequestPending,
+	Rejected,
 	InvalidName,
 	NotFound,
 }
