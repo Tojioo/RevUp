@@ -119,7 +119,7 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 			Theme = draft.Theme.Trim(),
 			Location = draft.Location.Trim(),
 			OrganizerName = draft.OrganizerName.Trim(),
-			TimeMode = TimeMode.Fixed,
+			TimeMode = draft.TimeMode,
 			StartTime = draft.StartTime.GetValueOrDefault(),
 			EndTime = draft.EndTime,
 			MaxAttendees = draft.MaxAttendees,

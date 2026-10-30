@@ -11,6 +11,8 @@ public class MeetDraft
 
 	public string OrganizerName { get; set; } = string.Empty;
 
+	public TimeMode TimeMode { get; set; } = TimeMode.Fixed;
+
 	public DateTime? StartTime { get; set; }
 
 	public DateTime? EndTime { get; set; }

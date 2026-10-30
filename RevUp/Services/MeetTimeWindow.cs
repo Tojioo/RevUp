@@ -14,7 +14,9 @@ public static class MeetTimeWindow
 		var start = meet.StartTime.ToString("HH:mm", _german);
 		var time = meet.TimeMode switch
 		{
-			TimeMode.OpenStart => $"Open Start ab {start}",
+			TimeMode.OpenStart => meet.EndTime is { } openStartEnd
+				? $"Open Start ab {start}, Ende {openStartEnd.ToString("HH:mm", _german)}"
+				: $"Open Start ab {start}",
 			TimeMode.OpenEnd => $"ab {start}, Open End",
 			_ => meet.EndTime is { } end ? $"{start}–{end.ToString("HH:mm", _german)}" : start,
 		};

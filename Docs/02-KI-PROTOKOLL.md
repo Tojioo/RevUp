@@ -37,5 +37,6 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Hinweis auf Krankheit (21.–27.10.); Auftrag: Lösungsdokument mit Patterns, Branches, TDD-Nachweis, SOLID-Beurteilung, Sprint-Reviews und Retrospektive entwerfen.             |
 | 2026-10-29 | Abgabe mit der Lehrperson auf den 02.11. verschoben; US-07 bis US-09 zurück in Sprint 2 (US-07/US-08 heute, US-09 morgen mit den Dokumenten).                       |
 | 2026-10-29 | Auftrag: US-07 (Filter nach Thema, kombinierbar mit öffentlich/privat) umsetzen.                                                                                         |
+| 2026-10-29 | Auftrag: US-08 (Zeitmodell Fixed / Open Start / Open End wählen) umsetzen.                                                                                                  |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

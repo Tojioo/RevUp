@@ -42,18 +42,35 @@
         </section>
 
         <section>
+            <p class="section-label">Zeitmodus</p>
+            <div class="segmented" role="radiogroup" aria-label="Zeitmodus">
+                @foreach (var (mode, label) in _timeModes)
+                {
+                    <button type="button" role="radio" class="segment @(_draft.TimeMode == mode ? "active" : "")"
+                            aria-checked="@(_draft.TimeMode == mode ? "true" : "false")" @onclick="() => SetTimeMode(mode)">
+                        @label
+                    </button>
+                }
+            </div>
+            <p class="hint">@TimeModeHint</p>
+        </section>
+
+        <section>
             <p class="section-label">Zeit</p>
             <div class="field-group">
                 <label class="field-row">
-                    <span class="field-label">Start</span>
+                    <span class="field-label">@(_draft.TimeMode == TimeMode.OpenStart ? "Start ab" : "Start")</span>
                     <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.StartTime" />
                     <ValidationMessage For="() => _draft.StartTime" />
                 </label>
-                <label class="field-row">
-                    <span class="field-label">Ende</span>
-                    <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.EndTime" />
-                    <ValidationMessage For="() => _draft.EndTime" />
-                </label>
+                @if (_draft.TimeMode != TimeMode.OpenEnd)
+                {
+                    <label class="field-row">
+                        <span class="field-label">@(_draft.TimeMode == TimeMode.OpenStart ? "Ende (optional)" : "Ende")</span>
+                        <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.EndTime" />
+                        <ValidationMessage For="() => _draft.EndTime" />
+                    </label>
+                }
             </div>
         </section>
 
@@ -85,6 +102,13 @@
 </EditForm>
 
 @code {
+    private static readonly (TimeMode Mode, string Label)[] _timeModes =
+    [
+        (TimeMode.Fixed, "Fixed"),
+        (TimeMode.OpenStart, "Open Start"),
+        (TimeMode.OpenEnd, "Open End"),
+    ];
+
     private readonly MeetDraft _draft = new();
     private EditContext _editContext = null!;
     private ValidationMessageStore _messages = null!;
@@ -97,6 +121,24 @@
         _editContext.OnFieldChanged += (_, args) => _messages.Clear(args.FieldIdentifier);
         var meets = await MeetService.GetUpcomingMeetsAsync();
         _themes = meets.Select(meet => meet.Theme).Distinct().Order().ToList();
+    }
+
+    private string TimeModeHint => _draft.TimeMode switch
+    {
+        TimeMode.OpenStart => "Ab dem Start kommen alle, wann sie wollen. Ein Ende ist freiwillig.",
+        TimeMode.OpenEnd => "Feste Startzeit, das Meet endet offen.",
+        _ => "Feste Start- und Endzeit.",
+    };
+
+    private void SetTimeMode(TimeMode mode)
+    {
+        _draft.TimeMode = mode;
+        if (mode == TimeMode.OpenEnd)
+        {
+            _draft.EndTime = null;
+        }
+
+        _messages.Clear(_editContext.Field(nameof(MeetDraft.EndTime)));
     }
 
     private async Task SubmitAsync()
