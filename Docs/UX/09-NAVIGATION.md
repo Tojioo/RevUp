@@ -1,6 +1,6 @@
 # 4. Card Sorting: Navigation & Struktur
 
-*Dokument 9 von 11 · [← 08 Personas](08-PERSONAS.md) · Weiter: [10 Wireframes →](10-wireframes.html)*
+*Dokument 9 von 12 · [← 08 Personas](08-PERSONAS.md) · Weiter: [10 Wireframes →](10-wireframes.html)*
 
 Ausgangspunkt waren alle Funktionen aus dem MVP-Backlog (siehe [`01-BACKLOG.md`](../01-BACKLOG.md)). Sortiert nach Nutzerabsicht statt nach technischer Umsetzung ergeben sich vier Themengruppen.
 

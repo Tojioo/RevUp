@@ -78,6 +78,7 @@ Die Docs sind durchnummeriert und über Zurück/Weiter-Links am Ende jeder Seite
 | 09 | `Docs/UX/09-NAVIGATION.md` | Card Sorting, Navigationsstruktur |
 | 10 | `Docs/UX/10-wireframes.html` | Low-Fi-Wireframes der Hauptseiten |
 | 11 | `Docs/UX/11-PROTOTYP-TEST.md` | Selbsttest gegen die Wireframes |
+| 12 | `Docs/12-LOESUNGSDOKUMENT.md` | Lösungsdokument der LB 426: Stories, Patterns, Branches, TDD-Nachweis, SOLID, Retrospektive |
 | – | `Docs/UX/Prototype/README.md` | Hi-Fi-Prototyp: Übersicht, `prototype.html` (lokal, massgeblich) + interne Claude-Design-Arbeitsversion |
 
 `RevUp/Icons/`: finale App-Icon-SVGs (Primary, Alert, Inverted), ausserhalb der nummerierten Doc-Kette.

@@ -1,6 +1,6 @@
 # RevUp: Design Basics
 
-*Dokument 4 von 11 · [← 03 Konzept](../03-KONZEPT.md) · Weiter: [05 Icon-Konzept →](05-gauge-mark.html)*
+*Dokument 4 von 12 · [← 03 Konzept](../03-KONZEPT.md) · Weiter: [05 Icon-Konzept →](05-gauge-mark.html)*
 
 This is a loose guideline, not a hard rule. If a color combination does not work in practice, adjust or rework it.
 
