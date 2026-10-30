@@ -1,3 +1,7 @@
+.visibility-filter {
+    margin-bottom: 12px;
+}
+
 .chip-row {
     display: flex;
     gap: 8px;

@@ -10,12 +10,24 @@
 
 <h1 class="page-title">Entdecken</h1>
 
+<div class="segmented visibility-filter" role="radiogroup" aria-label="Sichtbarkeit">
+    @foreach (var (visibility, label) in _visibilities)
+    {
+        <button type="button" role="radio" class="segment @(_filter.Visibility == visibility ? "active" : "")"
+                aria-checked="@(_filter.Visibility == visibility ? "true" : "false")"
+                @onclick="() => SetFilter(_filter with { Visibility = visibility })">
+            @label
+        </button>
+    }
+</div>
+
 <div class="chip-row">
+    <button type="button" class="chip @(_filter.Theme is null ? "active" : "")" @onclick="() => SetFilter(_filter with { Theme = null })">Alle</button>
     @foreach (var theme in _themes)
     {
         <button type="button"
-                class="chip @(theme == _selectedTheme ? "active" : "")"
-                @onclick="() => SelectTheme(theme)">
+                class="chip @(string.Equals(theme, _filter.Theme, StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                @onclick="() => SetFilter(_filter with { Theme = theme })">
             @theme
         </button>
     }
@@ -23,7 +35,7 @@
 
 @if (_filteredMeets.Count == 0)
 {
-    <p class="empty-state">@(_selectedTheme == AllThemes ? "Noch keine kommenden Meets." : "Keine Meets zu diesem Thema.")</p>
+    <p class="empty-state">@(_meets.Count == 0 ? "Noch keine kommenden Meets." : "Keine Meets für diesen Filter.")</p>
 }
 else
 {
@@ -56,12 +68,17 @@ else
 }
 
 @code {
-    private const string AllThemes = "Alle";
+    private static readonly (VisibilityFilter Visibility, string Label)[] _visibilities =
+    [
+        (VisibilityFilter.All, "Alle"),
+        (VisibilityFilter.Public, "Öffentlich"),
+        (VisibilityFilter.Private, "Privat"),
+    ];
 
     private IReadOnlyList<MeetListItem> _meets = [];
-    private List<string> _themes = [];
-    private string _selectedTheme = AllThemes;
-    private List<MeetListItem> _filteredMeets = [];
+    private IReadOnlyList<string> _themes = [];
+    private MeetFilter _filter = new();
+    private IReadOnlyList<MeetListItem> _filteredMeets = [];
 
     public async Task OnMeetChangedAsync(Guid meetId)
     {
@@ -90,20 +107,19 @@ else
     private async Task LoadAsync()
     {
         _meets = await MeetService.GetUpcomingMeetsAsync();
-        _themes = [AllThemes, .. _meets.Select(meet => meet.Theme).Distinct().Order()];
-        ApplyFilter();
+        _themes = MeetFilter.ThemesOf(_meets);
+        if (_filter.Theme is not null && !_themes.Contains(_filter.Theme, StringComparer.OrdinalIgnoreCase))
+        {
+            // Because the last meet of the chosen theme may just have ended or been removed while the page was open.
+            _filter = _filter with { Theme = null };
+        }
+
+        _filteredMeets = _filter.Apply(_meets);
     }
 
-    private void SelectTheme(string theme)
+    private void SetFilter(MeetFilter filter)
     {
-        _selectedTheme = theme;
-        ApplyFilter();
-    }
-
-    private void ApplyFilter()
-    {
-        _filteredMeets = _selectedTheme == AllThemes
-            ? _meets.ToList()
-            : _meets.Where(meet => meet.Theme == _selectedTheme).ToList();
+        _filter = filter;
+        _filteredMeets = _filter.Apply(_meets);
     }
 }

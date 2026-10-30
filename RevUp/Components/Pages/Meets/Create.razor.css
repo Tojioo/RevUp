@@ -9,34 +9,3 @@
     flex-direction: column;
     gap: 10px;
 }
-
-.segmented {
-    display: flex;
-    gap: 2px;
-    padding: 3px;
-    border-radius: 10px;
-    background: var(--surface2);
-}
-
-.segment {
-    flex: 1;
-    min-height: 44px;
-    border: none;
-    border-radius: 8px;
-    background: none;
-    color: var(--text-dim);
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.segment.active {
-    background: var(--accent);
-    color: var(--bg);
-}
-
-.segment:focus-visible {
-    outline: 2px solid var(--text);
-    outline-offset: 2px;
-}
