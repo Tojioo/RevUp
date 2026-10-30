@@ -32,6 +32,9 @@ public sealed record MeetListItem(
 			policy.Label,
 			policy.LocationHint,
 			meet.AttendeeCount,
-			meet.MaxAttendees);
+			meet.MaxAttendees)
+		{
+			IsCancelled = meet.IsCancelled,
+		};
 	}
 }

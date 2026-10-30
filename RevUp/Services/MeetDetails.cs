@@ -38,6 +38,10 @@ public sealed record MeetDetails(
 			policy.Label,
 			policy.LocationHint,
 			meet.AttendeeCount,
-			meet.MaxAttendees);
+			meet.MaxAttendees)
+		{
+			IsCancelled = meet.IsCancelled,
+			ChangedAt = meet.ChangedAt,
+		};
 	}
 }
