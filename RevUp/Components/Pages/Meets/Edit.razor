@@ -1,0 +1,89 @@
+@page "/meets/{Id:guid}/bearbeiten"
+@rendermode InteractiveServer
+@inject IMeetService MeetService
+@inject NavigationManager Navigation
+
+<PageTitle>Meet bearbeiten – RevUp</PageTitle>
+
+<div class="subheader">
+    <a class="back-btn" href="meets/@Id" aria-label="Zurück zum Meet"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+    <span class="subheader-title">@(_details?.Title ?? "Meet")</span>
+</div>
+
+<h1 class="page-title">Bearbeiten</h1>
+
+@if (_loaded && (_draft is null || _details is null))
+{
+    <p class="empty-state">Dieses Meet gibt es nicht mehr.</p>
+}
+else if (_details is { IsCancelled: true })
+{
+    <p class="empty-state">Dieses Meet ist abgesagt und lässt sich nicht mehr bearbeiten.</p>
+}
+else if (_draft is not null)
+{
+    <EditForm EditContext="_validation.EditContext" OnSubmit="SaveAsync">
+        <MeetForm Draft="_draft" Themes="_themes" CanChangeVisibility="false">
+            <button type="submit" class="btn-primary" disabled="@_busy">Änderungen speichern</button>
+        </MeetForm>
+    </EditForm>
+
+    <section class="cancel-section">
+        <p class="section-label">Absagen</p>
+        <p class="hint">Alle sehen das Meet danach als abgesagt, beitreten ist nicht mehr möglich. Das lässt sich nicht rückgängig machen.</p>
+        @if (_confirmCancel)
+        {
+            <div class="cancel-actions">
+                <button type="button" class="btn-secondary" @onclick="() => _confirmCancel = false">Nicht absagen</button>
+                <button type="button" class="btn-danger" disabled="@_busy" @onclick="CancelAsync">Wirklich absagen</button>
+            </div>
+        }
+        else
+        {
+            <button type="button" class="btn-danger" @onclick="() => _confirmCancel = true">Meet absagen</button>
+        }
+    </section>
+}
+
+@code {
+    private MeetDraft? _draft;
+    private MeetDetails? _details;
+    private ServerValidation _validation = null!;
+    private IReadOnlyList<string> _themes = [];
+    private bool _loaded;
+    private bool _busy;
+    private bool _confirmCancel;
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _draft = await MeetService.GetDraftForEditAsync(Id);
+        _details = await MeetService.GetMeetDetailsAsync(Id);
+        _validation = new ServerValidation(_draft ?? new MeetDraft());
+        _themes = MeetFilter.ThemesOf(await MeetService.GetUpcomingMeetsAsync());
+        _loaded = true;
+    }
+
+    private async Task SaveAsync()
+    {
+        _busy = true;
+        var result = await MeetService.UpdateAsync(Id, _draft!);
+        _busy = false;
+        if (result is null || result.Succeeded)
+        {
+            Navigation.NavigateTo($"meets/{Id}");
+            return;
+        }
+
+        _validation.Show(result.Errors);
+    }
+
+    private async Task CancelAsync()
+    {
+        _busy = true;
+        await MeetService.CancelAsync(Id);
+        Navigation.NavigateTo($"meets/{Id}");
+    }
+}

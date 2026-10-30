@@ -25,7 +25,11 @@ else if (_details is not null)
 
     <h1 class="hero-title">@_details.Title</h1>
 
-    @if (_location is not null)
+    @if (_details.IsCancelled)
+    {
+        <p class="status-pill status-error"><i class="fa-solid fa-ban" aria-hidden="true"></i> Abgesagt</p>
+    }
+    else if (_location is not null)
     {
         <p class="status-pill status-success"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Standort sichtbar</p>
     }
@@ -45,7 +49,16 @@ else if (_details is not null)
         <li class="detail-meta-row"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> Max. @_details.MaxVolumeDb dB</li>
     </ul>
 
-    @if (_location is not null)
+    @if (_details.ChangedAt is { } changedAt)
+    {
+        <p class="hint changed-hint">Zuletzt geändert: @changedAt.ToString("ddd, dd.MM., HH:mm", System.Globalization.CultureInfo.GetCultureInfo("de-CH"))</p>
+    }
+
+    @if (_details.IsCancelled)
+    {
+        <div class="btn-static">Abgesagt</div>
+    }
+    else if (_location is not null)
     {
         <div class="location-box">
             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
@@ -80,10 +93,16 @@ else if (_details is not null)
         </form>
     }
 
-    @if (!_details.IsPublic)
-    {
-        <a class="organizer-link" href="meets/@Id/anfragen"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Anfragen verwalten (Veranstalter)</a>
-    }
+    <div class="organizer-links">
+        @if (!_details.IsPublic)
+        {
+            <a class="organizer-link" href="meets/@Id/anfragen"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Anfragen verwalten (Veranstalter)</a>
+        }
+        @if (!_details.IsCancelled)
+        {
+            <a class="organizer-link" href="meets/@Id/bearbeiten"><i class="fa-solid fa-pen" aria-hidden="true"></i> Bearbeiten oder absagen (Veranstalter)</a>
+        }
+    </div>
 }
 
 @code {
@@ -157,6 +176,7 @@ else if (_details is not null)
             JoinStatus.InvalidName => "Bitte gib deinen Namen an (höchstens 40 Zeichen).",
             JoinStatus.NotFound => "Dieses Meet gibt es nicht mehr.",
             JoinStatus.Rejected => "Der Veranstalter hat deine Anfrage abgelehnt.",
+            JoinStatus.Cancelled => "Dieses Meet wurde abgesagt.",
             _ => null,
         };
     }

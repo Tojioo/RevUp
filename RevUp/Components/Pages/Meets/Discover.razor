@@ -43,12 +43,16 @@ else
         @foreach (var meet in _filteredMeets)
         {
             <a class="meet-link" href="meets/@meet.Id" @key="meet.Id">
-                <article class="meet-card">
+                <article class="meet-card @(meet.IsCancelled ? "cancelled" : "")">
                     <div class="badge-row">
                         <span class="badge @(meet.IsPublic ? "badge-public" : "badge-private")">
                             @meet.VisibilityLabel
                         </span>
                         <span class="badge badge-theme">@meet.Theme</span>
+                        @if (meet.IsCancelled)
+                        {
+                            <span class="badge badge-cancelled">Abgesagt</span>
+                        }
                     </div>
 
                     <h2 class="meet-title">@meet.Title</h2>
