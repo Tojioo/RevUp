@@ -117,3 +117,8 @@
     font-size: 14px;
     font-weight: 600;
 }
+
+.detail-meta-row.seats-full,
+.detail-meta-row.seats-full i {
+    color: var(--warning);
+}

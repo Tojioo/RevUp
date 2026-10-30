@@ -33,6 +33,7 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Auftrag: mit US-05 (Beitrittsanfrage für privates Meet) weitermachen.                                                                                                                   |
 | 2026-10-29 | Auftrag: US-06 (Anfragen annehmen/ablehnen) mit dem Observer-Pattern für Live-Aktualisierung umsetzen.                                                                       |
 | 2026-10-29 | Entscheid: nicht bewertungsrelevante Stories (Konten, P2/P3 ausser US-10) in den Meilenstein «Nach der LB» verschieben; Sprint 1 abschliessen.                         |
+| 2026-10-29 | Auftrag: US-10 (freie Plätze) als eigene Story umsetzen.                                                                                                                      |
 | 2026-10-29 | Hinweis auf Krankheit (21.–27.10.); Auftrag: Lösungsdokument mit Patterns, Branches, TDD-Nachweis, SOLID-Beurteilung, Sprint-Reviews und Retrospektive entwerfen.             |
 | 2026-10-29 | Abgabe mit der Lehrperson auf den 02.11. verschoben; US-07 bis US-09 zurück in Sprint 2 (US-07/US-08 heute, US-09 morgen mit den Dokumenten).                       |
 

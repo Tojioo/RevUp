@@ -16,6 +16,10 @@ public sealed record MeetDetails(
 	int AttendeeCount,
 	int MaxAttendees)
 {
+	public int FreeSeats => Math.Max(0, MaxAttendees - AttendeeCount);
+
+	public string SeatsLabel => SeatLabel.For(FreeSeats);
+
 	public static MeetDetails From(Meet meet)
 	{
 		var policy = JoinPolicies.For(meet);
