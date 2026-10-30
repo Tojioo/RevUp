@@ -52,7 +52,7 @@ Zusätzlich gab es drei technische Aufgaben ohne neue Funktion für Nutzer: T-01
 | Konkretes Subjekt    | `MeetChangeNotifier`, zusätzlich `NotifyAsync(meetId)`         |
 | Beobachter           | `IMeetObserver` mit `OnMeetChangedAsync(meetId)`              |
 | Konkrete Beobachter  | Seiten `Discover`, `Detail` und `Requests` (Blazor-Komponenten) |
-| Auslöser             | `MeetService` nach Erstellen, Beitritt, neuer Anfrage und Entscheid |
+| Auslöser             | `MeetService` nach Erstellen, Bearbeiten, Absagen, Beitritt, neuer Anfrage und Entscheid |
 
 ```mermaid
 classDiagram
@@ -74,7 +74,9 @@ classDiagram
     class MeetService {
         +JoinAsync(Guid id, string name) Task~JoinResult~
         +DecideAsync(Guid requestId, bool approve) Task~DecisionStatus~
-        +CreateAsync(MeetDraft draft) Task~MeetCreationResult~
+        +CreateAsync(MeetDraft draft) Task~MeetSaveResult~
+        +UpdateAsync(Guid id, MeetDraft draft) Task~MeetSaveResult~
+        +CancelAsync(Guid id) Task~bool~
     }
     class Discover
     class Detail
