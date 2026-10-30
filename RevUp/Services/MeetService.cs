@@ -105,12 +105,18 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 			.ToList();
 	}
 
-	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
+	public Task<MeetDraft?> GetDraftForEditAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public Task<MeetSaveResult?> UpdateAsync(Guid id, MeetDraft draft, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+	public async Task<MeetSaveResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
 		var errors = MeetDraftValidator.Validate(draft, clock.GetLocalNow().DateTime);
 		if (errors.Count > 0)
 		{
-			return new MeetCreationResult(null, errors);
+			return new MeetSaveResult(null, errors);
 		}
 
 		var meet = new Meet
@@ -129,7 +135,7 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 
 		await meets.AddAsync(meet, cancellationToken);
 		await notifier.NotifyAsync(meet.Id);
-		return new MeetCreationResult(meet, []);
+		return new MeetSaveResult(meet, []);
 	}
 
 	public void Dispose() => _joinLock.Dispose();

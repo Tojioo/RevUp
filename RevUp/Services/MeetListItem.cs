@@ -18,6 +18,8 @@ public sealed record MeetListItem(
 
 	public string SeatsLabel => SeatLabel.For(FreeSeats);
 
+	public bool IsCancelled { get; init; }
+
 	public static MeetListItem From(Meet meet)
 	{
 		var policy = JoinPolicies.For(meet);

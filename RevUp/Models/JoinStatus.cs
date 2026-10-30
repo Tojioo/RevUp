@@ -9,4 +9,5 @@ public enum JoinStatus
 	Rejected,
 	InvalidName,
 	NotFound,
+	Cancelled,
 }

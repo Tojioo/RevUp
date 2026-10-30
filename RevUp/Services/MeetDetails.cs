@@ -20,6 +20,10 @@ public sealed record MeetDetails(
 
 	public string SeatsLabel => SeatLabel.For(FreeSeats);
 
+	public bool IsCancelled { get; init; }
+
+	public DateTime? ChangedAt { get; init; }
+
 	public static MeetDetails From(Meet meet)
 	{
 		var policy = JoinPolicies.For(meet);
