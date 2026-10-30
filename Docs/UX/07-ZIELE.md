@@ -1,6 +1,6 @@
 # 2. Ziele definieren
 
-*Dokument 7 von 11 · [← 06 Fallbeschreibung](06-FALLBESCHREIBUNG.md) · Weiter: [08 Personas →](08-PERSONAS.md)*
+*Dokument 7 von 12 · [← 06 Fallbeschreibung](06-FALLBESCHREIBUNG.md) · Weiter: [08 Personas →](08-PERSONAS.md)*
 
 Nutzerziele, nicht Software-Features: was will die Person erreichen, unabhängig davon, wie RevUp das technisch löst.
 
