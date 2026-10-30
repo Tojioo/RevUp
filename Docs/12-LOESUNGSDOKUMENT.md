@@ -30,8 +30,11 @@ Alle Stories folgen dem Muster «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutze
 | US-04 | Als Teilnehmer möchte ich einem öffentlichen Meet mit meinem Namen beitreten und danach den Standort sehen, damit ich hinfahren kann. | umgesetzt |
 | US-05 | Als Teilnehmer möchte ich bei einem privaten Meet eine Beitrittsanfrage stellen, damit der Veranstalter über meine Teilnahme entscheiden kann. | umgesetzt |
 | US-06 | Als Veranstalter möchte ich offene Anfragen annehmen oder ablehnen, damit ich die Kontrolle über die Teilnehmerliste behalte. | umgesetzt |
+| US-07 | Als Teilnehmer möchte ich Meets nach Thema filtern, damit ich schneller passende Meets finde. | umgesetzt |
+| US-08 | Als Veranstalter möchte ich ein Zeitmodell wählen (Fixed / Open Start / Open End), damit klar ist, wann das Meet stattfindet. | umgesetzt |
+| US-09 | Als Veranstalter möchte ich mein Meet bearbeiten oder absagen, damit ich auf Änderungen reagieren kann. | umgesetzt |
 | US-10 | Als Teilnehmer möchte ich sehen, wie viele Plätze noch frei sind, damit ich weiss, ob sich eine Anfrage lohnt. | umgesetzt |
-| US-07 – US-09, US-11, US-12, US-17 – US-19 | Filter, Zeitmodell, Bearbeiten/Absagen, «Meine Meets», «Meine Anfragen», Konten | bewusst nach der LB (siehe Retrospektive) |
+| US-11, US-12, US-17 – US-19 | «Meine Meets», «Meine Anfragen», Konten | bewusst nach der LB (siehe Retrospektive) |
 
 Zusätzlich gab es drei technische Aufgaben ohne neue Funktion für Nutzer: T-01 (Icons), T-02 (Persistenz mit linq2db und SQLite), T-03 (Trennung von Unit- und Integrationstests).
 
@@ -151,6 +154,9 @@ Jeder Branch enthält die ID der Story und wurde in `main` zurückgemergt.
 | `US-05-beitrittsanfrage` | US-05 | Anfragen speichern, Liste offener Anfragen | #25 |
 | `US-06-anfragen-entscheiden` | US-06 | Annehmen/Ablehnen, Observer, Live-Aktualisierung | #26 |
 | `US-10-freie-plaetze` | US-10 | «Noch X Plätze frei», live | #27 |
+| `US-07-filter` | US-07 | Filter nach Thema, kombinierbar mit öffentlich/privat | #28 |
+| `US-08-zeitmodell` | US-08 | Zeitmodus Fixed / Open Start / Open End, Darstellung in Liste und Detail | #29 |
+| `US-09-bearbeiten-absagen` | US-09 | Bearbeiten, Absagen mit Bestätigung, gemeinsames Formular, Datenbank-Upgrade | #30 |
 
 ### 3.3 TDD (3-4)
 
@@ -166,15 +172,18 @@ Bei jeder Story wurde zuerst ein Test-Commit gepusht, der in der CI fehlschlägt
 | US-05 | [4c244bd](https://github.com/Tojioo/RevUp/commit/4c244bd) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40825261432) | [e13248a](https://github.com/Tojioo/RevUp/commit/e13248a) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40825345599) |
 | US-06 | [bf160c6](https://github.com/Tojioo/RevUp/commit/bf160c6) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40825622028) | [a23e1ea](https://github.com/Tojioo/RevUp/commit/a23e1ea) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40825713620) |
 | US-10 | [63f055a](https://github.com/Tojioo/RevUp/commit/63f055a) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40884570470) | [93928cf](https://github.com/Tojioo/RevUp/commit/93928cf) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40884612004) |
+| US-07 | [f480d72](https://github.com/Tojioo/RevUp/commit/f480d72) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928175302) | [61c8f58](https://github.com/Tojioo/RevUp/commit/61c8f58) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928290276) |
+| US-08 | [2f79d70](https://github.com/Tojioo/RevUp/commit/2f79d70) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928780023) | [c9a676d](https://github.com/Tojioo/RevUp/commit/c9a676d) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928933742) |
+| US-09 | [b2a9453](https://github.com/Tojioo/RevUp/commit/b2a9453) · [CI](https://github.com/Tojioo/RevUp/actions/runs/41017333570) | [f9bbb2a](https://github.com/Tojioo/RevUp/commit/f9bbb2a) · [CI](https://github.com/Tojioo/RevUp/actions/runs/41017525641) |
 
-Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetRepository`) und `RevUp.IntegrationTests` (gegen SQLite; jeder Test erhält eine frische Kopie einer eingecheckten Snapshot-Datenbank). Stand bei Abgabe: 63 Unit-Tests und 8 Integrationstests, alle grün.
+Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetRepository`) und `RevUp.IntegrationTests` (gegen SQLite; jeder Test erhält eine frische Kopie einer eingecheckten Snapshot-Datenbank). Stand bei Abgabe: 84 Unit-Tests und 9 Integrationstests, alle grün.
 
 ### 3.4 Coding Conventions und Code Smells (3-7)
 
 - Regeln in `.editorconfig` (Benennung, Klammern, Leerzeilen, Reihenfolge) und StyleCop-Analyse in jedem Projekt (`Directory.Build.props`). Der Build läuft ohne Warnungen, die CI prüft das bei jedem Push.
 - Zusätzlich wurden die Inspections von Rider bereinigt (z. B. Initializer-Umbrüche, überflüssige Null-Prüfung).
 - Kommentare nur, wo das «Warum» nicht aus dem Code hervorgeht (z. B. warum der Service erst nach dem Freigeben der Sperre meldet).
-- Doppelter Code wurde zusammengefasst, z. B. gemeinsame Styles in `app.css`, Beispieldaten an einer Stelle (`MeetSeeder`).
+- Doppelter Code wurde zusammengefasst, z. B. gemeinsame Styles in `app.css`, Beispieldaten an einer Stelle (`MeetSeeder`) und ein gemeinsames Formular (`MeetForm`, `ServerValidation`) für «Erstellen» und «Bearbeiten».
 
 ## 4 SOLID-Beurteilung (Aufgabe 4-1)
 
@@ -192,7 +201,7 @@ Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetR
 
 ![Board am Ende von Sprint 1](Sprints/sprint-1-board.png)
 
-**Sprint 2 (30.10. – 01.11.):** US-07 bis US-10 sowie Retrospektive, SOLID-Beurteilung und Abgabe. Die Abgabe wurde wegen der Krankheit mit der Lehrperson auf den 02.11.2026 verschoben.
+**Sprint 2 (30.10. – 01.11.):** Geplant waren US-07 bis US-10 sowie Retrospektive, SOLID-Beurteilung und Abgabe; US-07, US-08 und US-10 wurden schon am 29.10. vorgezogen. Die Abgabe wurde wegen der Krankheit mit der Lehrperson auf den 02.11.2026 verschoben. Alle vier Stories wurden umgesetzt und im Review an der laufenden App durchgespielt (nach Thema filtern, Zeitmodus wählen, Meet bearbeiten und absagen, freie Plätze live). Beim Bearbeiten bleibt die Sichtbarkeit bewusst fix, weil sich Teilnehmende nach ihr gerichtet haben. Offen bleiben US-11, US-12 und die Konten (US-17 bis US-19) im Meilenstein «Nach der LB».
 
 ## 6 Retrospektive (Aufgaben 5-1, 5-2)
 
