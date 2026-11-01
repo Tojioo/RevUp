@@ -42,5 +42,7 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Kurze Gesamtprüfung nach dem Mergen (Build, Tests, CI, Links, App) und Frage, wo US-07/US-08 in der Doku fehlen. |
 | 2026-10-30 | Auftrag: US-09 (Meet bearbeiten oder absagen) umsetzen. |
 | 2026-11-01 | Board-Screenshots von Sprint 2 zu einem Bild zusammenfügen und im Sprint-Review einbinden, Meilenstein Sprint 2 abschliessen. |
+| 2026-11-01 | Frage nach den restlichen Schritten bis zur Abgabe; danach Gesamtprüfung (Build, Tests in anderen Zeitzonen und Sprachen, Browser-Test aller Stories, Neustart, Datenbank-Upgrade, Abgabe-ZIP). |
+| 2026-11-01 | Funde der Gesamtprüfung beheben (Link im Icon-Konzept, Fehlerseiten auf Deutsch) und Frage, was in Abschnitt 7 «Einsatz von KI» gehört. |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*
