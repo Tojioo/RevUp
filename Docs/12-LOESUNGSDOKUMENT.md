@@ -205,6 +205,8 @@ Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetR
 
 **Sprint 2 (30.10. – 01.11.):** Geplant waren US-07 bis US-10 sowie Retrospektive, SOLID-Beurteilung und Abgabe; US-07, US-08 und US-10 wurden schon am 29.10. vorgezogen. Die Abgabe wurde wegen der Krankheit mit der Lehrperson auf den 02.11.2026 verschoben. Alle vier Stories wurden umgesetzt und im Review an der laufenden App durchgespielt (nach Thema filtern, Zeitmodus wählen, Meet bearbeiten und absagen, freie Plätze live). Beim Bearbeiten bleibt die Sichtbarkeit bewusst fix, weil sich Teilnehmende nach ihr gerichtet haben. Offen bleiben US-11, US-12 und die Konten (US-17 bis US-19) im Meilenstein «Nach der LB».
 
+![Board am Ende von Sprint 2 (Listenansicht der mobilen App, oben «Todo», danach «Done»)](Sprints/sprint-2-board.jpg)
+
 ## 6 Retrospektive (Aufgaben 5-1, 5-2)
 
 Vorgehen: Rückblick auf beide Sprints mit der Frage «Was hat meine Arbeitsweise gebremst?». Bewusst nicht auf das Produkt bezogen, sondern auf Planung, Praktiken und Zusammenarbeit (mit Lehrperson und KI-Werkzeugen).
