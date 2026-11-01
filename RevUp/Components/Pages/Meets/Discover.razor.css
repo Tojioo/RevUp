@@ -104,3 +104,8 @@
 .meta-item.seats-full {
     color: var(--warning);
 }
+
+.meet-card.cancelled .meet-title,
+.meet-card.cancelled .meta-item {
+    opacity: 0.55;
+}

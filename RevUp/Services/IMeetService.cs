@@ -18,5 +18,14 @@ public interface IMeetService
 	/// <summary>Accepts or rejects an open request; an accepted participant then sees the location.</summary>
 	Task<DecisionStatus> DecideAsync(Guid requestId, bool approve, CancellationToken cancellationToken = default);
 
-	Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default);
+	/// <summary>The meet's current values to start editing from, or null if it does not exist.</summary>
+	Task<MeetDraft?> GetDraftForEditAsync(Guid id, CancellationToken cancellationToken = default);
+
+	/// <summary>Saves an edited meet; null if it does not exist.</summary>
+	Task<MeetSaveResult?> UpdateAsync(Guid id, MeetDraft draft, CancellationToken cancellationToken = default);
+
+	/// <summary>Cancels a meet; false if it does not exist.</summary>
+	Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken = default);
+
+	Task<MeetSaveResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default);
 }

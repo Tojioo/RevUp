@@ -1,0 +1,141 @@
+<div class="form">
+    <section>
+        <p class="section-label">Angaben</p>
+        <div class="field-group">
+            <label class="field-row">
+                <span class="field-label">Titel</span>
+                <InputText class="field-input" @bind-Value="Draft.Title" placeholder="Sonntagsausfahrt Tuning-Treff" />
+                <ValidationMessage For="() => Draft.Title" />
+            </label>
+            <label class="field-row">
+                <span class="field-label">Thema</span>
+                <InputText class="field-input" @bind-Value="Draft.Theme" placeholder="Tuning" list="themes" />
+                <ValidationMessage For="() => Draft.Theme" />
+            </label>
+            <label class="field-row">
+                <span class="field-label">Ort</span>
+                <InputText class="field-input" @bind-Value="Draft.Location" placeholder="Parkplatz Industriestrasse 12, Zürich" />
+                <ValidationMessage For="() => Draft.Location" />
+            </label>
+            <label class="field-row">
+                <span class="field-label">Veranstalter</span>
+                <InputText class="field-input" @bind-Value="Draft.OrganizerName" placeholder="Dein Name" autocomplete="name" />
+                <ValidationMessage For="() => Draft.OrganizerName" />
+            </label>
+        </div>
+        <datalist id="themes">
+            @foreach (var theme in Themes)
+            {
+                <option value="@theme"></option>
+            }
+        </datalist>
+    </section>
+
+    <section>
+        <p class="section-label">Zeitmodus</p>
+        <div class="segmented" role="radiogroup" aria-label="Zeitmodus">
+            @foreach (var (mode, label) in _timeModes)
+            {
+                <button type="button" role="radio" class="segment @(Draft.TimeMode == mode ? "active" : "")"
+                        aria-checked="@(Draft.TimeMode == mode ? "true" : "false")" @onclick="() => SetTimeMode(mode)">
+                    @label
+                </button>
+            }
+        </div>
+        <p class="hint">@TimeModeHint</p>
+    </section>
+
+    <section>
+        <p class="section-label">Zeit</p>
+        <div class="field-group">
+            <label class="field-row">
+                <span class="field-label">@(Draft.TimeMode == TimeMode.OpenStart ? "Start ab" : "Start")</span>
+                <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="Draft.StartTime" />
+                <ValidationMessage For="() => Draft.StartTime" />
+            </label>
+            @if (Draft.TimeMode != TimeMode.OpenEnd)
+            {
+                <label class="field-row">
+                    <span class="field-label">@(Draft.TimeMode == TimeMode.OpenStart ? "Ende (optional)" : "Ende")</span>
+                    <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="Draft.EndTime" />
+                    <ValidationMessage For="() => Draft.EndTime" />
+                </label>
+            }
+        </div>
+    </section>
+
+    <section>
+        <p class="section-label">Limits</p>
+        <div class="limits">
+            <Stepper Label="Max. Teilnehmer" @bind-Value="Draft.MaxAttendees" Min="2" Max="500" />
+            <ValidationMessage For="() => Draft.MaxAttendees" />
+            <Stepper Label="Max. Lautstärke (dB)" @bind-Value="Draft.MaxVolumeDb" Min="50" Max="130" Step="5" />
+            <ValidationMessage For="() => Draft.MaxVolumeDb" />
+        </div>
+    </section>
+
+    <section>
+        <p class="section-label">Sichtbarkeit</p>
+        @if (CanChangeVisibility)
+        {
+            <div class="segmented" role="radiogroup" aria-label="Sichtbarkeit">
+                <button type="button" role="radio" class="segment @(Draft.IsPublic ? "active" : "")" aria-checked="@(Draft.IsPublic ? "true" : "false")" @onclick="() => Draft.IsPublic = true">Öffentlich</button>
+                <button type="button" role="radio" class="segment @(Draft.IsPublic ? "" : "active")" aria-checked="@(Draft.IsPublic ? "false" : "true")" @onclick="() => Draft.IsPublic = false">Privat</button>
+            </div>
+            <p class="hint">
+                @(Draft.IsPublic
+                    ? "Wer beitritt, sieht den Ort sofort."
+                    : "Du nimmst jede Anfrage an oder lehnst sie ab. Erst danach sieht die Person den Ort.")
+            </p>
+        }
+        else
+        {
+            <p class="hint">@(Draft.IsPublic ? "Öffentlich" : "Privat"). Die Sichtbarkeit bleibt, wie sie beim Erstellen gewählt wurde, weil sich Teilnehmende danach gerichtet haben.</p>
+        }
+    </section>
+
+    @ChildContent
+</div>
+
+@code {
+    private static readonly (TimeMode Mode, string Label)[] _timeModes =
+    [
+        (TimeMode.Fixed, "Fixed"),
+        (TimeMode.OpenStart, "Open Start"),
+        (TimeMode.OpenEnd, "Open End"),
+    ];
+
+    [CascadingParameter]
+    public EditContext EditContext { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public MeetDraft Draft { get; set; } = null!;
+
+    [Parameter]
+    public IReadOnlyList<string> Themes { get; set; } = [];
+
+    [Parameter]
+    public bool CanChangeVisibility { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string TimeModeHint => Draft.TimeMode switch
+    {
+        TimeMode.OpenStart => "Ab dem Start kommen alle, wann sie wollen. Ein Ende ist freiwillig.",
+        TimeMode.OpenEnd => "Feste Startzeit, das Meet endet offen.",
+        _ => "Feste Start- und Endzeit.",
+    };
+
+    private void SetTimeMode(TimeMode mode)
+    {
+        Draft.TimeMode = mode;
+        if (mode == TimeMode.OpenEnd)
+        {
+            Draft.EndTime = null;
+        }
+
+        // Because a message about the end may no longer apply once the time mode changed.
+        EditContext.NotifyFieldChanged(EditContext.Field(nameof(MeetDraft.EndTime)));
+    }
+}

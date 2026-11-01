@@ -46,6 +46,11 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 				return new JoinResult(JoinStatus.NotFound);
 			}
 
+			if (meet.IsCancelled)
+			{
+				return new JoinResult(JoinStatus.Cancelled);
+			}
+
 			(result, changed) = await ApplyJoinAsync(meet, JoinPolicies.For(meet).Join(meet, name), name, cancellationToken);
 		}
 		finally
@@ -105,34 +110,124 @@ public sealed class MeetService(IMeetRepository meets, IJoinRequestRepository re
 			.ToList();
 	}
 
-	public async Task<MeetCreationResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
+	public async Task<MeetDraft?> GetDraftForEditAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		var meet = await meets.GetByIdAsync(id, cancellationToken);
+		return meet is null
+			? null
+			: new MeetDraft
+			{
+				Title = meet.Title,
+				Theme = meet.Theme,
+				Location = meet.Location,
+				OrganizerName = meet.OrganizerName,
+				TimeMode = meet.TimeMode,
+				StartTime = meet.StartTime,
+				EndTime = meet.EndTime,
+				MaxAttendees = meet.MaxAttendees,
+				MaxVolumeDb = meet.MaxVolumeDb,
+				IsPublic = meet.IsPublic,
+			};
+	}
+
+	public async Task<MeetSaveResult?> UpdateAsync(Guid id, MeetDraft draft, CancellationToken cancellationToken = default)
+	{
+		await _joinLock.WaitAsync(cancellationToken);
+		try
+		{
+			var meet = await meets.GetByIdAsync(id, cancellationToken);
+			if (meet is null)
+			{
+				return null;
+			}
+
+			var now = clock.GetLocalNow().DateTime;
+			var errors = MeetDraftValidator.Validate(draft, now).ToList();
+			if (draft.MaxAttendees < meet.AttendeeCount)
+			{
+				errors.Add(new ValidationError(nameof(MeetDraft.MaxAttendees), $"Mindestens {meet.AttendeeCount}, so viele sind schon dabei."));
+			}
+
+			if (errors.Count > 0)
+			{
+				return new MeetSaveResult(null, errors);
+			}
+
+			CopyDraft(draft, meet);
+			meet.ChangedAt = now;
+			await meets.UpdateAsync(meet, cancellationToken);
+		}
+		finally
+		{
+			_joinLock.Release();
+		}
+
+		await notifier.NotifyAsync(id);
+		return new MeetSaveResult(await meets.GetByIdAsync(id, cancellationToken), []);
+	}
+
+	public async Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		await _joinLock.WaitAsync(cancellationToken);
+		try
+		{
+			var meet = await meets.GetByIdAsync(id, cancellationToken);
+			if (meet is null)
+			{
+				return false;
+			}
+
+			meet.IsCancelled = true;
+			meet.ChangedAt = clock.GetLocalNow().DateTime;
+			await meets.UpdateAsync(meet, cancellationToken);
+		}
+		finally
+		{
+			_joinLock.Release();
+		}
+
+		await notifier.NotifyAsync(id);
+		return true;
+	}
+
+	public async Task<MeetSaveResult> CreateAsync(MeetDraft draft, CancellationToken cancellationToken = default)
 	{
 		var errors = MeetDraftValidator.Validate(draft, clock.GetLocalNow().DateTime);
 		if (errors.Count > 0)
 		{
-			return new MeetCreationResult(null, errors);
+			return new MeetSaveResult(null, errors);
 		}
 
 		var meet = new Meet
 		{
-			Title = draft.Title.Trim(),
-			Theme = draft.Theme.Trim(),
-			Location = draft.Location.Trim(),
-			OrganizerName = draft.OrganizerName.Trim(),
-			TimeMode = draft.TimeMode,
-			StartTime = draft.StartTime.GetValueOrDefault(),
-			EndTime = draft.EndTime,
-			MaxAttendees = draft.MaxAttendees,
-			MaxVolumeDb = draft.MaxVolumeDb,
+			Title = string.Empty,
+			Theme = string.Empty,
+			Location = string.Empty,
+			OrganizerName = string.Empty,
 			IsPublic = draft.IsPublic,
 		};
+		CopyDraft(draft, meet);
 
 		await meets.AddAsync(meet, cancellationToken);
 		await notifier.NotifyAsync(meet.Id);
-		return new MeetCreationResult(meet, []);
+		return new MeetSaveResult(meet, []);
 	}
 
 	public void Dispose() => _joinLock.Dispose();
+
+	// The visibility is left out on purpose: people joined or asked under the rules it set when the meet was created.
+	private static void CopyDraft(MeetDraft draft, Meet meet)
+	{
+		meet.Title = draft.Title.Trim();
+		meet.Theme = draft.Theme.Trim();
+		meet.Location = draft.Location.Trim();
+		meet.OrganizerName = draft.OrganizerName.Trim();
+		meet.TimeMode = draft.TimeMode;
+		meet.StartTime = draft.StartTime.GetValueOrDefault();
+		meet.EndTime = draft.EndTime;
+		meet.MaxAttendees = draft.MaxAttendees;
+		meet.MaxVolumeDb = draft.MaxVolumeDb;
+	}
 
 	// Assumption: a meet without an end (Open End) is over once its start day has passed.
 	private static bool HasEnded(Meet meet, DateTime now) =>

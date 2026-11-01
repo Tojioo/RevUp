@@ -275,3 +275,8 @@ button {
     outline: 2px solid var(--text);
     outline-offset: 2px;
 }
+
+.badge-cancelled {
+    background: rgba(255, 84, 112, 0.16);
+    color: var(--error);
+}

@@ -38,5 +38,8 @@ Gemäss Vorgabe LB: festgehalten werden die wichtigsten **Prompts** (nicht die A
 | 2026-10-29 | Abgabe mit der Lehrperson auf den 02.11. verschoben; US-07 bis US-09 zurück in Sprint 2 (US-07/US-08 heute, US-09 morgen mit den Dokumenten).                       |
 | 2026-10-29 | Auftrag: US-07 (Filter nach Thema, kombinierbar mit öffentlich/privat) umsetzen.                                                                                         |
 | 2026-10-29 | Auftrag: US-08 (Zeitmodell Fixed / Open Start / Open End wählen) umsetzen.                                                                                                  |
+| 2026-10-29 | Merge-Konflikte (KI-Protokoll) in den offenen PRs zu US-07, US-08 und US-10 auflösen. |
+| 2026-10-29 | Kurze Gesamtprüfung nach dem Mergen (Build, Tests, CI, Links, App) und Frage, wo US-07/US-08 in der Doku fehlen. |
+| 2026-10-30 | Auftrag: US-09 (Meet bearbeiten oder absagen) umsetzen. |
 
 *Hinweis: Dieses Protokoll wird laufend ergänzt, sobald weitere KI-Unterstützung für das Projekt genutzt wird.*

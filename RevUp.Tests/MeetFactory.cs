@@ -14,6 +14,7 @@ internal static class MeetFactory
 		StartTime = MeetDrafts.Now.AddDays(1),
 		EndTime = MeetDrafts.Now.AddDays(1).AddHours(3),
 		MaxAttendees = maxAttendees,
+		MaxVolumeDb = 85,
 		AttendeeNames = [.. attendees],
 	};
 }

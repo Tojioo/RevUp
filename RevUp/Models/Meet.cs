@@ -22,6 +22,10 @@ public class Meet : Entity
 
 	public int MaxVolumeDb { get; set; }
 
+	public bool IsCancelled { get; set; }
+
+	public DateTime? ChangedAt { get; set; }
+
 	public List<string> AttendeeNames { get; init; } = [];
 
 	public int AttendeeCount => AttendeeNames.Count;

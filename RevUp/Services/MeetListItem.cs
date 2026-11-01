@@ -18,6 +18,8 @@ public sealed record MeetListItem(
 
 	public string SeatsLabel => SeatLabel.For(FreeSeats);
 
+	public bool IsCancelled { get; init; }
+
 	public static MeetListItem From(Meet meet)
 	{
 		var policy = JoinPolicies.For(meet);
@@ -30,6 +32,9 @@ public sealed record MeetListItem(
 			policy.Label,
 			policy.LocationHint,
 			meet.AttendeeCount,
-			meet.MaxAttendees);
+			meet.MaxAttendees)
+		{
+			IsCancelled = meet.IsCancelled,
+		};
 	}
 }

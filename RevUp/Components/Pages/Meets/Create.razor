@@ -7,143 +7,25 @@
 
 <h1 class="page-title">Neues Meet</h1>
 
-<EditForm EditContext="_editContext" OnSubmit="SubmitAsync">
-    <div class="form">
-        <section>
-            <p class="section-label">Angaben</p>
-            <div class="field-group">
-                <label class="field-row">
-                    <span class="field-label">Titel</span>
-                    <InputText class="field-input" @bind-Value="_draft.Title" placeholder="Sonntagsausfahrt Tuning-Treff" />
-                    <ValidationMessage For="() => _draft.Title" />
-                </label>
-                <label class="field-row">
-                    <span class="field-label">Thema</span>
-                    <InputText class="field-input" @bind-Value="_draft.Theme" placeholder="Tuning" list="themes" />
-                    <ValidationMessage For="() => _draft.Theme" />
-                </label>
-                <label class="field-row">
-                    <span class="field-label">Ort</span>
-                    <InputText class="field-input" @bind-Value="_draft.Location" placeholder="Parkplatz Industriestrasse 12, Zürich" />
-                    <ValidationMessage For="() => _draft.Location" />
-                </label>
-                <label class="field-row">
-                    <span class="field-label">Veranstalter</span>
-                    <InputText class="field-input" @bind-Value="_draft.OrganizerName" placeholder="Dein Name" autocomplete="name" />
-                    <ValidationMessage For="() => _draft.OrganizerName" />
-                </label>
-            </div>
-            <datalist id="themes">
-                @foreach (var theme in _themes)
-                {
-                    <option value="@theme"></option>
-                }
-            </datalist>
-        </section>
-
-        <section>
-            <p class="section-label">Zeitmodus</p>
-            <div class="segmented" role="radiogroup" aria-label="Zeitmodus">
-                @foreach (var (mode, label) in _timeModes)
-                {
-                    <button type="button" role="radio" class="segment @(_draft.TimeMode == mode ? "active" : "")"
-                            aria-checked="@(_draft.TimeMode == mode ? "true" : "false")" @onclick="() => SetTimeMode(mode)">
-                        @label
-                    </button>
-                }
-            </div>
-            <p class="hint">@TimeModeHint</p>
-        </section>
-
-        <section>
-            <p class="section-label">Zeit</p>
-            <div class="field-group">
-                <label class="field-row">
-                    <span class="field-label">@(_draft.TimeMode == TimeMode.OpenStart ? "Start ab" : "Start")</span>
-                    <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.StartTime" />
-                    <ValidationMessage For="() => _draft.StartTime" />
-                </label>
-                @if (_draft.TimeMode != TimeMode.OpenEnd)
-                {
-                    <label class="field-row">
-                        <span class="field-label">@(_draft.TimeMode == TimeMode.OpenStart ? "Ende (optional)" : "Ende")</span>
-                        <InputDate Type="InputDateType.DateTimeLocal" class="field-input" @bind-Value="_draft.EndTime" />
-                        <ValidationMessage For="() => _draft.EndTime" />
-                    </label>
-                }
-            </div>
-        </section>
-
-        <section>
-            <p class="section-label">Limits</p>
-            <div class="limits">
-                <Stepper Label="Max. Teilnehmer" @bind-Value="_draft.MaxAttendees" Min="2" Max="500" />
-                <ValidationMessage For="() => _draft.MaxAttendees" />
-                <Stepper Label="Max. Lautstärke (dB)" @bind-Value="_draft.MaxVolumeDb" Min="50" Max="130" Step="5" />
-                <ValidationMessage For="() => _draft.MaxVolumeDb" />
-            </div>
-        </section>
-
-        <section>
-            <p class="section-label">Sichtbarkeit</p>
-            <div class="segmented" role="radiogroup" aria-label="Sichtbarkeit">
-                <button type="button" role="radio" class="segment @(_draft.IsPublic ? "active" : "")" aria-checked="@(_draft.IsPublic ? "true" : "false")" @onclick="() => _draft.IsPublic = true">Öffentlich</button>
-                <button type="button" role="radio" class="segment @(_draft.IsPublic ? "" : "active")" aria-checked="@(_draft.IsPublic ? "false" : "true")" @onclick="() => _draft.IsPublic = false">Privat</button>
-            </div>
-            <p class="hint">
-                @(_draft.IsPublic
-                    ? "Wer beitritt, sieht den Ort sofort."
-                    : "Du nimmst jede Anfrage an oder lehnst sie ab. Erst danach sieht die Person den Ort.")
-            </p>
-        </section>
-
+<EditForm EditContext="_validation.EditContext" OnSubmit="SubmitAsync">
+    <MeetForm Draft="_draft" Themes="_themes">
         <button type="submit" class="btn-primary">Meet erstellen</button>
-    </div>
+    </MeetForm>
 </EditForm>
 
 @code {
-    private static readonly (TimeMode Mode, string Label)[] _timeModes =
-    [
-        (TimeMode.Fixed, "Fixed"),
-        (TimeMode.OpenStart, "Open Start"),
-        (TimeMode.OpenEnd, "Open End"),
-    ];
-
     private readonly MeetDraft _draft = new();
-    private EditContext _editContext = null!;
-    private ValidationMessageStore _messages = null!;
-    private List<string> _themes = [];
+    private ServerValidation _validation = null!;
+    private IReadOnlyList<string> _themes = [];
 
     protected override async Task OnInitializedAsync()
     {
-        _editContext = new EditContext(_draft);
-        _messages = new ValidationMessageStore(_editContext);
-        _editContext.OnFieldChanged += (_, args) => _messages.Clear(args.FieldIdentifier);
-        var meets = await MeetService.GetUpcomingMeetsAsync();
-        _themes = meets.Select(meet => meet.Theme).Distinct().Order().ToList();
-    }
-
-    private string TimeModeHint => _draft.TimeMode switch
-    {
-        TimeMode.OpenStart => "Ab dem Start kommen alle, wann sie wollen. Ein Ende ist freiwillig.",
-        TimeMode.OpenEnd => "Feste Startzeit, das Meet endet offen.",
-        _ => "Feste Start- und Endzeit.",
-    };
-
-    private void SetTimeMode(TimeMode mode)
-    {
-        _draft.TimeMode = mode;
-        if (mode == TimeMode.OpenEnd)
-        {
-            _draft.EndTime = null;
-        }
-
-        _messages.Clear(_editContext.Field(nameof(MeetDraft.EndTime)));
+        _validation = new ServerValidation(_draft);
+        _themes = MeetFilter.ThemesOf(await MeetService.GetUpcomingMeetsAsync());
     }
 
     private async Task SubmitAsync()
     {
-        _messages.Clear();
         var result = await MeetService.CreateAsync(_draft);
         if (result.Succeeded)
         {
@@ -151,11 +33,6 @@
             return;
         }
 
-        foreach (var error in result.Errors)
-        {
-            _messages.Add(_editContext.Field(error.Field), error.Message);
-        }
-
-        _editContext.NotifyValidationStateChanged();
+        _validation.Show(result.Errors);
     }
 }
