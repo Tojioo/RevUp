@@ -33,3 +33,4 @@ Festgehalten sind die wichtigsten Anfragen an die KI, sinngemäss und ohne die A
 | 2026-11-01 | Funde beheben (Link im Icon-Konzept, Fehlerseiten auf Deutsch); Entwurf für Abschnitt 7 «Einsatz von KI». |
 | 2026-11-02 | Dokumentation kürzen und überarbeiten. |
 | 2026-11-02 | Meinen Text für Abschnitt 7 «Einsatz von KI» auf Genauigkeit prüfen und anpassen. |
+| 2026-11-02 | Lösungsdokument als Word-Datei im eigenen Stil aufbereiten, mit allen schriftlichen Ergebnissen in einer Datei. |
