@@ -5,6 +5,7 @@
 | | |
 |---|---|
 | Name | Nicolas Stadelmann |
+| Klasse | IN24a |
 | Modul | 426 «Software mit agilen Methoden entwickeln» |
 | Projekt | RevUp, Web-App zur Organisation von Car- und Bike-Meets (eigene Idee, Einzelarbeit, von der Lehrperson freigegeben) |
 | Repository | https://github.com/Tojioo/RevUp (privat, Lehrperson hat Zugriff) |
@@ -16,25 +17,24 @@
 - Einzelarbeit statt Partnerarbeit und GitHub statt GitLab der BBB sind mit der Lehrperson abgesprochen; bewertet wird wie ein Teamprojekt.
 - C# mit .NET 10 und ASP.NET Core Blazor, Tests mit xUnit, CI mit GitHub Actions.
 - Gemergt wird nur mit Merge Commits (Squash und Rebase ausgeschaltet), Branches werden nicht gelöscht. So bleiben die Test-Commits jeder Story sichtbar.
-- Alle schriftlichen Ergebnisse stehen in diesem Dokument; weitere Dokumente unter `Docs/` sind verlinkt.
+- Alle schriftlichen Ergebnisse stehen in diesem Dokument. Quellcode und weitere Dokumente liegen im Ordner `RevUp` der Abgabe und im Repository.
 
 ## 1 User Stories (Aufgaben 1-1, 1-2)
 
-Jede Story hat das Format «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutzen>», eine eindeutige ID und prüfbare Akzeptanzkriterien. Alle Kriterien stehen im [Product Backlog](01-BACKLOG.md), jede Story ist ein GitHub-Issue.
+Jede Story hat das Format «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutzen>», eine eindeutige ID und prüfbare Akzeptanzkriterien und ist ein GitHub-Issue. US-01 bis US-10 sind umgesetzt; US-11, US-12 und die Konten (US-17 bis US-19) folgen nach der LB (siehe [Product Backlog](01-BACKLOG.md)).
 
-| ID    | User Story (Kurzform)                                                              | Status        |
-|-------|------------------------------------------------------------------------------------|---------------|
-| US-01 | Als Veranstalter möchte ich ein Meet erstellen, damit ich einen Treffpunkt organisieren kann. | umgesetzt |
-| US-02 | Als Veranstalter möchte ich ein Meet als öffentlich oder privat markieren, damit ich steuern kann, wer den Standort sieht. | umgesetzt |
-| US-03 | Als Teilnehmer möchte ich alle aktuellen Meets in einer Liste sehen, damit ich ein passendes Meet finden kann. | umgesetzt |
-| US-04 | Als Teilnehmer möchte ich einem öffentlichen Meet mit meinem Namen beitreten und danach den Standort sehen, damit ich hinfahren kann. | umgesetzt |
-| US-05 | Als Teilnehmer möchte ich bei einem privaten Meet eine Beitrittsanfrage stellen, damit der Veranstalter über meine Teilnahme entscheiden kann. | umgesetzt |
-| US-06 | Als Veranstalter möchte ich offene Anfragen annehmen oder ablehnen, damit ich die Kontrolle über die Teilnehmerliste behalte. | umgesetzt |
-| US-07 | Als Teilnehmer möchte ich Meets nach Thema filtern, damit ich schneller passende Meets finde. | umgesetzt |
-| US-08 | Als Veranstalter möchte ich ein Zeitmodell wählen (Fixed / Open Start / Open End), damit klar ist, wann das Meet stattfindet. | umgesetzt |
-| US-09 | Als Veranstalter möchte ich mein Meet bearbeiten oder absagen, damit ich auf Änderungen reagieren kann. | umgesetzt |
-| US-10 | Als Teilnehmer möchte ich sehen, wie viele Plätze noch frei sind, damit ich weiss, ob sich eine Anfrage lohnt. | umgesetzt |
-| US-11, US-12, US-17 – US-19 | «Meine Meets», «Meine Anfragen», Konten | Meilenstein «Nach der LB» |
+| ID | User Story | Akzeptanzkriterien |
+|---|---|---|
+| US-01 | Als Veranstalter möchte ich ein neues Meet mit Titel, Thema, Ort, Zeitmodus, max. Teilnehmerzahl und max. Lautstärke erstellen, damit ich einen Treffpunkt organisieren kann. | Meet wird gespeichert; alle Pflichtfelder validiert; Meet erscheint in der Übersicht. |
+| US-02 | Als Veranstalter möchte ich ein Meet als "Öffentlich" oder "Privat" markieren, damit ich steuern kann, wer den Standort sieht. | Sichtbarkeits-Flag beeinflusst nachgelagerten Beitritts-Flow (US-04/US-05). |
+| US-03 | Als Teilnehmer möchte ich alle aktuellen Meets in einer Liste sehen, damit ich ein passendes Meet finden kann. | Liste zeigt Titel, Thema, Zeitfenster, Sichtbarkeit (öffentlich/privat), ohne genauen Standort. |
+| US-04 | Als Teilnehmer möchte ich einem öffentlichen Meet mit meinem Namen beitreten und danach sofort den Standort sehen, damit ich hinfahren kann. | Nach Angabe Name + Bestätigung wird Standort angezeigt; Teilnehmerzahl wird erhöht (max. Limit beachten). |
+| US-05 | Als Teilnehmer möchte ich bei einem privaten Meet eine Beitrittsanfrage mit meinem Namen stellen, damit der Veranstalter über meine Teilnahme entscheiden kann. | Anfrage landet in Pending-Liste des Veranstalters; Standort ist für den Anfragenden noch nicht sichtbar. |
+| US-06 | Als Veranstalter möchte ich offene Beitrittsanfragen zu meinem privaten Meet annehmen oder ablehnen, damit ich die Kontrolle über die Teilnehmerliste behalte. | Bei Annahme wird Standort für die Person sichtbar; bei Ablehnung nicht. |
+| US-07 | Als Teilnehmer möchte ich Meets nach Thema filtern (z. B. 90s Cars, Tuning, Motorräder), damit ich schneller passende Meets finde. | Filter reduziert die Liste korrekt; kombinierbar mit Status (öffentlich/privat). |
+| US-08 | Als Veranstalter möchte ich ein Zeitmodell wählen (Fixed / Open Start / Open End), damit klar ist, wann das Meet stattfindet. | Zeitmodell wird bei Erstellung gewählt und in der Detailansicht korrekt dargestellt. |
+| US-09 | Als Veranstalter möchte ich mein Meet bearbeiten oder absagen, damit ich auf Änderungen reagieren kann. | Änderungen/Absage werden für Teilnehmer sichtbar/nachvollziehbar. |
+| US-10 | Als Teilnehmer möchte ich sehen, wie viele Plätze bei einem Meet noch frei sind, damit ich weiss, ob sich eine Anfrage lohnt. | Anzeige "X / max. Teilnehmer" korrekt und live aktualisiert. |
 
 Dazu kamen drei technische Aufgaben: T-01 (Icons), T-02 (Persistenz mit linq2db und SQLite), T-03 (Unit- und Integrationstests getrennt).
 
