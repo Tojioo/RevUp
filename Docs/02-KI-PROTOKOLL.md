@@ -4,7 +4,7 @@
 
 Festgehalten sind die wichtigsten Anfragen an die KI, sinngemäss und ohne die Antworten.
 
-**Rollen:** Idee, Anforderungen, Prioritäten, Regeln (z. B. `.editorconfig`, Merge nur mit Merge-Commit) und alle Entscheide kamen von mir. Die KI habe ich zum Besprechen von Ideen, zum Prüfen eigener Änderungen vor dem Commit (nicht einzeln aufgeführt) und ab Oktober zum Umsetzen der Stories nach meinen Vorgaben genutzt. Jede Umsetzung kam als Pull Request, den ich geprüft und gemergt habe.
+**Rollen:** Idee, Anforderungen, Prioritäten, Regeln (z. B. `.editorconfig`, Merge nur mit Merge-Commit) und alle Entscheide kamen von mir. Die KI habe ich zum Besprechen von Ideen genutzt, in der IDE laufend für kurze Fragen, Refactorings, Debugging und das Prüfen eigener Änderungen vor dem Commit (nicht einzeln aufgeführt) und ab Mitte Oktober für die Umsetzung der Stories mit Claude Code nach meinen Vorgaben. Jede Umsetzung von Claude Code kam als Pull Request, den ich geprüft und gemergt habe. Mehr dazu in Abschnitt 7 des [Lösungsdokuments](12-LOESUNGSDOKUMENT.md).
 
 | Datum | Anfrage (sinngemäss) |
 |---|---|
@@ -32,3 +32,4 @@ Festgehalten sind die wichtigsten Anfragen an die KI, sinngemäss und ohne die A
 | 2026-11-01 | Sprint-2-Board einbinden; Gesamtprüfung vor der Abgabe (Build, Tests, Browser-Test aller Stories, Abgabe-ZIP). |
 | 2026-11-01 | Funde beheben (Link im Icon-Konzept, Fehlerseiten auf Deutsch); Entwurf für Abschnitt 7 «Einsatz von KI». |
 | 2026-11-02 | Dokumentation kürzen und überarbeiten. |
+| 2026-11-02 | Meinen Text für Abschnitt 7 «Einsatz von KI» auf Genauigkeit prüfen und anpassen. |

@@ -221,10 +221,22 @@ Erkenntnis: Kleine Stories mit Test zuerst haben sich bewährt. Weil jede Story 
 
 ## 7 Einsatz von KI
 
-**Wofür:** Ideen und Entscheide besprechen, eigene Änderungen vor dem Commit prüfen, den Prototyp mit Claude Design erstellen und ab Oktober die Stories mit Claude Code umsetzen (Code, Tests, Pull Requests) sowie dieses Dokument entwerfen.
+### 7.1 Werkzeug und Umfang
 
-**Meine Rolle:** Idee, Anforderungen, Prioritäten und Regeln (Coding Conventions, Merge-Regeln, Tests zuerst) kamen von mir. Ich habe den Umfang entschieden (z. B. Konten nach der LB), die Termine mit der Lehrperson abgesprochen, das Board geführt und jede Änderung als Pull Request geprüft und gemergt.
+Ich habe in diesem Projekt KI in mehreren Bereichen eingesetzt. Bei neuen Features habe ich damit Ideen gesammelt und Lösungsansätze besprochen. Die in die IDE integrierte KI habe ich während der ganzen Entwicklung verwendet, so wie auch in meinem normalen Arbeitsalltag: für kurze Fragen, Refactorings, das Debuggen von Tests und teilweise auch, um Code vollständig schreiben zu lassen, wenn das schneller ging. Vor dem Committen habe ich meine Änderungen von der KI prüfen lassen, um Fehler und Unklarheiten früh zu finden.
 
-**Kontrolle:** Test zuerst und rot in der CI, Build ohne Warnungen, Rider-Inspektionen und Durchspielen in der laufenden App.
+Ab Mitte Oktober hat Claude Code nach meinen Vorgaben einen grossen Teil der Umsetzung übernommen, also Code und Tests der Stories. Nach meinem einwöchigen Ausfall war das nötig, damit ich das Projekt rechtzeitig abgeben konnte. Auch dieses Lösungsdokument hat Claude Code in meinem Auftrag entworfen; diesen Abschnitt habe ich selbst geschrieben und von Claude Code auf Genauigkeit prüfen lassen.
 
-**Fazit:** Die KI war schnell, brauchte aber klare Vorgaben und Kontrolle. Fehler kamen vor, z. B. Rider-Hinweise, welche die CI nicht prüfte. Die wichtigsten Anfragen stehen im [KI-Protokoll](02-KI-PROTOKOLL.md).
+Ausserdem hat mir die KI bei der Verwaltung des Repositorys geholfen, also beim Einrichten der CI-Pipeline und beim Erstellen von Issues und Pull Requests, und mir erklärt, wie ich das Board einrichte. Bei Soloprojekten arbeite ich normalerweise nur mit einem Main- und einem Dev-Branch, und mit Stories, Pull Requests und ähnlichem kenne ich mich vor allem in Azure DevOps aus. Da mir der Ablauf auf GitHub weniger vertraut ist, habe ich diesen Teil bewusst der KI überlassen.
+
+### 7.2 Meine Rolle
+
+Die Idee, die Anforderungen und die Grundzüge der Architektur (Blazor, Persistenz mit linq2db und SQLite, Aufbau der Tests) stammen von mir. Ich habe die Entwicklung selbst gesteuert und entschieden, wann ich Code selbst schreibe und wann ich die KI einsetze. Auch bei Claude Code habe ich vorgegeben, was umgesetzt wird und in welcher Reihenfolge. Aus den Vorschlägen beim Brainstorming habe ich ausgewählt, was ich umsetze und was nicht. Welche Issues es gibt, wie sie priorisiert werden und wann etwas gemergt wird, habe ich selbst festgelegt, und das Board habe ich selbst gepflegt.
+
+### 7.3 Kontrolle
+
+Code und Vorschläge der KI habe ich nie ungeprüft übernommen. Alles, was die KI in der IDE geschrieben oder umgebaut hat, habe ich gelesen, bei Bedarf angepasst und getestet, bevor es in einen Commit kam. Die Änderungen von Claude Code kamen als Pull Requests, die ich durchgesehen und selbst gemergt habe. Die Einschätzungen zu meinen Commits habe ich als zweite Meinung genutzt, entschieden habe ich selbst. Issues und Pull Requests, welche die KI vorbereitet hat, habe ich durchgesehen und bei Bedarf korrigiert.
+
+### 7.4 Fazit
+
+Die KI war für mich ein alltägliches Werkzeug, das mir vor allem bei Routinearbeiten, beim Debuggen, bei der Umsetzung der Stories und bei der Organisation des Repositorys viel Zeit gespart hat. Beim Brainstorming und beim Prüfen der Commits war sie eine hilfreiche zweite Meinung. Nach meinem Ausfall hat mir Claude Code ermöglicht, den Abgabetermin trotzdem einzuhalten. Ihre Vorschläge passten aber nicht immer zum Projekt und mussten geprüft werden. Weil ich jede Änderung selbst kontrolliert habe, behielt ich den Überblick und die Verantwortung für den Code. Die wichtigsten Anfragen stehen im [KI-Protokoll](02-KI-PROTOKOLL.md).
