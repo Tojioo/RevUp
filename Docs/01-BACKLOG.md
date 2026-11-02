@@ -35,43 +35,32 @@ Priorisiert (P1 = zuerst umsetzen). Format: *Als \<Rolle> möchte ich \<Ziel>, d
 | US-18 | P1   | Als Nutzer möchte ich mich an- und abmelden, damit niemand sonst in meinem Namen Meets erstellt oder beitritt. | Anmeldung mit Benutzername und Passwort; falsche Angaben ergeben eine allgemeine Meldung; angemeldet bleiben über ein Cookie; Abmelden; zu viele Fehlversuche werden kurz gesperrt. |
 | US-19 | P1   | Als Veranstalter möchte ich, dass nur angemeldete Personen beitreten und den Ort sehen, damit niemand mit einem fremden Namen zum Standort kommt. | Erstellen und Beitreten nur angemeldet (sonst zur Anmeldung); Veranstalter und Teilnehmer werden über das Konto gespeichert und mit Anzeigename gezeigt; den Ort sehen nur Veranstalter und beigetretene Konten. |
 
-## Umsetzung
+## Vorgehen
 
-Jede Story ist ein GitHub-Issue mit ihrer ID am Anfang des Titels (bei US-01 bis US-12 zusätzlich Issue-Nummer = Story-Nummer), Label `user story`
-und Priorität (`P1` bis `P3`). Die Sprints sind Meilensteine: Sprint 1 = P1, Sprint 2 = P2, Sprint 3 = P3.
-Der Stand jeder Story ist auf dem [Board](https://github.com/users/Tojioo/projects/2/views/1) sichtbar
-(Backlog, Sprint Backlog, In Progress, Review, Done).
+Jede Story ist ein GitHub-Issue mit der ID am Anfang des Titels, dem Label `user story` und einer Priorität (`P1` bis `P3`). Die Meilensteine sind Sprint 1, Sprint 2 und «Nach der LB». Der Stand ist auf dem [Board](https://github.com/users/Tojioo/projects/2/views/1) sichtbar (Todo, In Progress, Done).
 
-**Definition of Ready:** Story im Format «Als … möchte ich …, damit …», eindeutige ID, prüfbare Akzeptanzkriterien, Priorität.
+**Definition of Ready:** Format «Als … möchte ich …, damit …», eindeutige ID, prüfbare Akzeptanzkriterien, Priorität.
 
 **Ablauf pro Story (TDD):**
 
-1. Branch von `main` mit der Story-ID: `US-01-meet-erstellen`.
-2. Test schreiben, der die Akzeptanzkriterien prüft, committen und pushen. Die CI (GitHub Actions) zeigt ihn rot.
-3. Einfachste Implementierung, bis der Test grün ist, committen und pushen.
-4. Aufräumen (Refactoring), Tests bleiben grün. Schritte 2 bis 4 wiederholen, bis alle Kriterien abgedeckt sind.
-5. Pull Request nach `main` mit `Closes #<Nr>`, mit Merge Commit mergen (kein Squash, damit die Test-Commits sichtbar bleiben).
-   Branches werden nicht gelöscht.
+1. Branch von `main` mit der Story-ID, z. B. `US-01-meet-erstellen`.
+2. Test für die Akzeptanzkriterien committen und pushen; die CI zeigt ihn rot.
+3. Einfachste Umsetzung, bis der Test grün ist, committen und pushen.
+4. Aufräumen, Tests bleiben grün. Schritte 2 bis 4 wiederholen, bis alle Kriterien abgedeckt sind.
+5. Pull Request mit `Closes #<Nr>`, Merge mit Merge Commit (kein Squash, damit die Test-Commits sichtbar bleiben). Branches werden nicht gelöscht.
 
-**Konventionen:** Commits `US-xx: <Satz im Imperativ>` (Englisch, wie der Code); Test-Commits beginnen mit `Test`.
-Code nach `.editorconfig` und StyleCop, der Build bleibt ohne Warnungen.
+**Konventionen:** Commits `US-xx: <Satz im Imperativ>` auf Englisch, Test-Commits beginnen mit `Test`. Code nach `.editorconfig` und StyleCop, Build ohne Warnungen.
 
-**Definition of Done:** Tests vor der Funktionalität gepusht und dort rot; alle Akzeptanzkriterien erfüllt und getestet;
-CI grün ohne Warnungen; Coding Conventions, SOLID und Code Smells geprüft; Backlog und KI-Protokoll nachgeführt.
+**Definition of Done:** Tests vor der Funktionalität gepusht und dort rot; alle Akzeptanzkriterien erfüllt und getestet; CI grün ohne Warnungen; Coding Conventions, SOLID und Code Smells geprüft; Backlog und KI-Protokoll nachgeführt.
 
 **Geplante Design Patterns:**
 
-- **Observer:** Änderungen an einem Meet (neue Anfrage, Freigabe, freie Plätze) benachrichtigen die geöffneten Seiten,
-  damit Veranstalter offene Anfragen (US-06) und alle die freien Plätze (US-10) live sehen, ohne neu zu laden.
-- **Strategy:** Eine Beitritts-Regel pro Sichtbarkeit: öffentlich = sofort beitreten und Standort sehen (US-04),
-  privat = Anfrage stellen und auf Freigabe warten (US-05). So verteilt sich die Unterscheidung öffentlich/privat nicht
-  über den Code, und weitere Regeln (z. B. «nur auf Einladung») kommen ohne Änderung bestehender Klassen dazu.
+- **Observer:** Änderungen an einem Meet benachrichtigen die geöffneten Seiten, damit offene Anfragen (US-06) und freie Plätze (US-10) ohne Neuladen stimmen.
+- **Strategy:** Eine Beitrittsregel pro Sichtbarkeit (öffentlich: sofort beitreten, US-04; privat: Anfrage, US-05). So verteilt sich die Unterscheidung nicht über den Code, und neue Regeln kommen ohne Änderung bestehender Klassen dazu.
 
 ## Technische Aufgaben
 
-Keine User Stories: Sie liefern keine neue Funktion für Veranstalter oder Teilnehmer, sondern verbessern Darstellung,
-Architektur oder Testbarkeit. Ablauf wie bei den Stories (Issue, Branch mit ID, Pull Request). Bei reinem Refactoring
-bleiben die bestehenden Tests vor und nach jedem Schritt grün.
+Ohne neue Funktion für Nutzer, aber mit demselben Ablauf (Issue, Branch mit ID, Pull Request). Bei reinem Refactoring bleiben die bestehenden Tests vor und nach jedem Schritt grün.
 
 | ID   | Aufgabe                                                                                                                                       | Grund                                                                                    |
 |------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
@@ -81,7 +70,7 @@ bleiben die bestehenden Tests vor und nach jedem Schritt grün.
 
 ## Später / Stretch (bewusst nicht im MVP)
 
-Bewusste Scope-Entscheidung: Diese Punkte sind fachlich Teil der ursprünglichen Idee, würden den MVP-Rahmen aber sprengen (siehe README, Abschnitt "Bewusst ausgeklammert").
+Fachlich Teil der ursprünglichen Idee, für den MVP aber zu gross.
 
 | ID    | User Story                                                                                                                                                       | Grund für Verschiebung                                                 |
 |-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
@@ -91,7 +80,7 @@ Bewusste Scope-Entscheidung: Diese Punkte sind fachlich Teil der ursprünglichen
 | US-16 | Als Veranstalter möchte ich eine Person als "störend" melden, die am Standort markiert wird, damit andere Teilnehmer/die Polizei informiert sind.                | Moderationslogik + Missbrauchspotenzial, braucht eigenes Konzept.      |
 | US-20 | Als Nutzer möchte ich mein Konto zusätzlich mit Zwei-Faktor-Anmeldung oder Passkey schützen, damit ein gestohlenes Passwort nicht reicht. | Sinnvoll, aber für den MVP zu umfangreich (Authenticator-App, Wiederherstellungscodes, WebAuthn). |
 
-## Nicht-funktionale Anforderungen (Auszug)
+## Nicht-funktionale Anforderungen
 
-- Standortdaten dürfen erst nach den definierten Freigabe-Regeln (öffentlich/privat) ausgeliefert werden. Serverseitig durchgesetzt, nicht nur UI-seitig versteckt.
-- Alle Formulareingaben serverseitig validiert (nicht nur clientseitig).
+- Standortdaten werden erst nach den Freigabe-Regeln (öffentlich/privat) ausgeliefert, serverseitig durchgesetzt und nicht nur in der Oberfläche versteckt.
+- Alle Formulareingaben werden serverseitig validiert.
