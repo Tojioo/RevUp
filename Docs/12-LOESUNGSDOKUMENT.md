@@ -8,7 +8,7 @@
 | Klasse | IN24a |
 | Modul | 426 «Software mit agilen Methoden entwickeln» |
 | Projekt | RevUp, Web-App zur Organisation von Car- und Bike-Meets (eigene Idee, Einzelarbeit, von der Lehrperson freigegeben) |
-| Repository | https://github.com/Tojioo/RevUp (privat, Lehrperson hat Zugriff) |
+| Repository | https://github.com/Tojioo/RevUp (öffentlich) |
 | Board | https://github.com/users/Tojioo/projects/2/views/1 |
 | Abgabe | Ordner und ZIP `StadelmannLB-426`, Abgabetermin 02.11.2026 (mit der Lehrperson vereinbart) |
 
