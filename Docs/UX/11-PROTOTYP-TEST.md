@@ -2,29 +2,22 @@
 
 *Dokument 11 von 12 · [← 10 Wireframes](10-wireframes.html) · Weiter: [Prototyp (Hi-Fi) →](Prototype/README.md) · [12 Lösungsdokument →](../12-LOESUNGSDOKUMENT.md)*
 
-**Methode:** Leichtgewichtiger Selbsttest (Cognitive Walkthrough) anhand der Wireframes in [`10-wireframes.html`](10-wireframes.html), keine externen Testpersonen. Grenzen dieser Methode: als Entwickler ist man nie ein neutraler Testnutzer, blinde Flecken bleiben wahrscheinlich unentdeckt. Für den MVP-Rahmen ausreichend, siehe Abwägung im Chat-Verlauf zu diesem Dokument.
+**Methode:** Selbsttest (Cognitive Walkthrough) anhand der [Wireframes](10-wireframes.html), ohne externe Testpersonen. Grenze: Als Entwickler ist man kein neutraler Testnutzer. Für den MVP reicht das.
 
-## Aufgaben und Effizienz (Klickpfade)
+## Aufgaben und Klickpfade
 
 | Aufgabe                                | Pfad                                                                       | Schritte              |
 |----------------------------------------|----------------------------------------------------------------------------|-----------------------|
-| Öffentliches Meet finden und beitreten | Entdecken (Start) → Thema filtern → Meet öffnen → Name eingeben, beitreten | 3 Klicks + 1 Eingabe  |
+| Öffentliches Meet finden und beitreten | Entdecken → Thema filtern → Meet öffnen → Name eingeben, beitreten         | 3 Klicks + 1 Eingabe  |
 | Meet erstellen                         | Erstellen → Formular ausfüllen → Absenden                                  | 2 Klicks + 7 Eingaben |
 | Private Anfrage verwalten              | Meine Meets → Annehmen/Ablehnen                                            | 2 Klicks              |
 
-Die ersten beiden Aufgaben sind kurz genug (2 bis 3 Klicks). Das Erstellen-Formular hat mit 7 Feldern die höchste Eingabelast im MVP.
+Alle drei Aufgaben lassen sich ohne Sackgassen durchspielen. Das Erstellen-Formular hat mit 7 Feldern die höchste Eingabelast, passt aber zum Konzept (die Rahmenbedingungen sind der Kern).
 
 ## Gefundene Probleme
 
-- **Detail-Ansicht unterscheidet Button-Text nicht:** Im Wireframe zeigt die Detailseite nur "Anfrage stellen" (privates Beispiel). Bei öffentlichen Meets muss der Button stattdessen "Beitreten" heissen und sofort den Standort zeigen, nicht erst eine Anfrage auslösen. Das war im ersten Entwurf nicht klar genug getrennt. **Konsequenz:** Button-Text und -Verhalten müssen explizit an `IsPublic` hängen, nicht als Variante desselben Buttons behandelt werden (Story 4 vs. 5).
-- **Formular ohne sichtbare Validierungshinweise:** 7 Pflichtfelder ohne erkennbares Feedback, wo ein Fehler liegt. Risiko: Nutzer merkt Probleme erst nach dem Absenden. **Konsequenz:** Inline-Validierung direkt am Feld einplanen (Backlog, nicht-funktionale Anforderungen, bereits vermerkt: "serverseitig validiert").
-- **Kein Leerzustand vorgesehen:** Weder Wireframe noch Backlog behandeln, was die Entdecken-Liste zeigt, wenn kein Meet zum gewählten Filter passt. **Konsequenz:** Leerzustand ("Keine Meets zu diesem Thema") als kleine zusätzliche Story/Detail vormerken.
+- **Ein Button für zwei Fälle:** Die Detailseite zeigt nur «Anfrage stellen». Bei öffentlichen Meets muss er «Beitreten» heissen und sofort den Standort zeigen. **Folge:** Text und Verhalten hängen an der Sichtbarkeit (US-04 vs. US-05).
+- **Keine Validierungshinweise:** Bei 7 Pflichtfeldern merkt man Fehler erst nach dem Absenden. **Folge:** Fehlermeldungen direkt am Feld, serverseitig geprüft.
+- **Kein Leerzustand:** Unklar, was die Liste zeigt, wenn kein Meet zum Filter passt. **Folge:** eigener Text für den Leerzustand.
 
-## Grobe Einschätzung (Effektivität / Zufriedenheit)
-
-- **Effektivität:** Alle drei Kernaufgaben lassen sich anhand der Wireframes ohne Sackgassen durchspielen.
-- **Zufriedenheit:** Struktur wirkt aufgeräumt, das Erstellen-Formular fühlt sich beim Durchgehen länger an als die anderen Aufgaben. Passt aber zum Funktionsumfang (viele Rahmenbedingungen sind Kern des Konzepts, siehe `03-KONZEPT.md`), keine Kürzung vorgesehen.
-
-## Ergebnis
-
-Die drei gefundenen Punkte fliessen als Klarstellung in die Umsetzung von Story 4/5 (Button-Verhalten) und die nicht-funktionalen Anforderungen (Validierung, Leerzustand) ein, kein Rückbau der Wireframes nötig.
+Alle drei Punkte sind in die Umsetzung eingeflossen; die Wireframes mussten nicht zurückgebaut werden.

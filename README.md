@@ -6,83 +6,64 @@
   <circle cx="50" cy="50" r="6" fill="#CBD9D7"/>
 </svg>
 
-Web-App zur Organisation von Car- und Bike-Meets. Projekt für Modul 426 "Software mit agilen Methoden entwerfen" (3. Lehrjahr).
+Web-App zur Organisation von Car- und Bike-Meets. Projekt für Modul 426 «Software mit agilen Methoden entwickeln» (3. Lehrjahr), Einzelarbeit.
 
-## Projektidee & Team
+## Idee
 
-**Team:** Solo-Projekt (Einzelarbeit)
+**Problem:** Car- und Bike-Meets werden meist über Chatgruppen oder soziale Medien organisiert. Der Standort wird geteilt, bevor der Veranstalter weiss, wer kommt. Das führt zu ungebetenen Gästen, Lärm und Ärger mit Anwohnern und Polizei.
 
-**Problem:** Car- und Bike-Meets werden heute meist informell über Chatgruppen oder soziale Medien organisiert. Das führt zu mehreren Problemen:
-- Standorte werden öffentlich geteilt, bevor der Veranstalter weiss, wer überhaupt kommt → ungebetene Gäste, Störenfriede, teils Lärmbelästigung und Ärger mit Anwohnern/Polizei.
-- Es gibt keine strukturierte Möglichkeit, ein Meet nach Thema, Zeitrahmen oder Teilnehmerzahl zu organisieren.
-- Veranstalter haben keine Kontrolle darüber, wer am Meet teilnimmt, bevor der Standort bekannt ist.
+**Zielgruppe:** Veranstalter (Privatpersonen, Event-Organisatoren) und Teilnehmer aus der Auto- und Motorradszene.
 
-**Zielgruppe:**
-- **Veranstalter:** Privatpersonen oder Event-Organisatoren, die ein Car-/Bike-Meet durchführen wollen.
-- **Teilnehmer:** Personen aus der Auto-/Motorrad-Szene, die an Meets teilnehmen möchten.
+**Lösung:** Veranstalter erstellen Meets mit Thema, Zeitmodus und Limits, öffentlich oder privat. Den Standort sehen Teilnehmer erst nach dem Beitritt (öffentlich) oder nach der Freigabe durch den Veranstalter (privat).
 
-**Lösung (Kurzfassung):** RevUp lässt Veranstalter Meets erstellen (öffentlich oder privat, mit Thema, Zeitrahmen und Teilnehmerlimits). Der genaue Standort wird erst nach Angabe der Kontaktdaten (öffentliche Meets) bzw. nach expliziter Freigabe durch den Veranstalter (private Meets) sichtbar. Das reduziert die Hemmschwelle für offene Standortangaben und gibt Veranstaltern Kontrolle über ihre Teilnehmerliste.
+**Vision:** Die einfachste Art, ein Car- oder Bike-Meet sicher und kontrolliert zu organisieren, ohne Chatgruppen und ohne unkontrollierte Standortweitergabe.
 
-## Vision
+## Umfang
 
-RevUp soll die einfachste Art werden, ein Car-/Bike-Meet sicher und kontrolliert zu organisieren.
-Von der Ankündigung bis zur An-/Abmeldung der Teilnehmer, ohne Umweg über Chatgruppen und ohne unkontrollierte Standortweitergabe.
+Umgesetzt sind US-01 bis US-10: Meets erstellen, bearbeiten und absagen, öffentlich oder privat, Liste mit Filter nach Thema, Beitritt mit Namen, Anfragen annehmen oder ablehnen und freie Plätze live. Polizei-Funktionen und das Melden von Störenfrieden sind bewusst ausgeklammert. Details im [Product Backlog](Docs/01-BACKLOG.md).
 
-## Tech-Stack
+## Starten
 
-- **ASP.NET Core + Blazor** (Server-Interaktivität), C#
-- .NET 10
-- Datenhaltung: linq2db mit SQLite (`revup.db`, Connection String `RevUp` in `appsettings.json`); fehlende Tabellen werden beim Start angelegt, eine leere Datenbank mit Beispiel-Meets gefüllt
-- Tests: xUnit, CI: GitHub Actions (`dotnet test RevUp.slnx` bei jedem Push und Pull Request)
-- Code-Analyse: StyleCop, Build ohne Warnungen
+Voraussetzung ist das .NET 10 SDK.
 
-## Umfang (MVP)
+```
+dotnet run --project RevUp
+dotnet test RevUp.slnx
+```
 
-Siehe [Docs/01-BACKLOG.md](Docs/01-BACKLOG.md) für den vollständigen Product Backlog inkl. User Stories.
+Beim ersten Start legt die App `RevUp/revup.db` an und füllt sie mit Beispiel-Meets.
 
-**MVP deckt ab:**
-- Meet erstellen (Titel, Thema, Ort, Zeitmodus, max. Teilnehmer, max. Lautstärke)
-- Öffentlich/Privat-Unterscheidung
-- Beitreten mit Namensangabe → öffentlich: Standort sofort sichtbar; privat: erst nach Freigabe durch Veranstalter
-- Meet-Übersicht mit Filter nach Thema
-- Veranstalter kann Beitrittsanfragen annehmen/ablehnen
+## Technik
 
-**Bewusst ausgeklammert (Backlog, nicht MVP):** Polizei-Rolle, Lärmbeschwerden, Räumungsankündigungen, Melden von Störenfrieden.
-Siehe Backlog, Abschnitt "Später/Stretch".
-
-## Solution-Struktur
-
-Die Solution ist in 4 Projekte unterteilt:
+- C#, .NET 10, ASP.NET Core Blazor (Server-Interaktivität)
+- linq2db mit SQLite; fehlende Tabellen und Spalten werden beim Start ergänzt
+- xUnit, StyleCop (Build ohne Warnungen), CI mit GitHub Actions bei jedem Push und Pull Request
 
 | Projekt | Zweck |
 |---|---|
-| `RevUp/` | Die eigentliche Blazor-Web-App (`RevUp.csproj`) |
-| `RevUp.Tests/` | Unit-Tests (xUnit): ohne I/O und Datenbank, mit eigenen Fakes |
-| `RevUp.IntegrationTests/` | Integrationstests gegen SQLite: jeder Test erhält eine frische Kopie von `Snapshot/revup.db`. Den Snapshot erzeugt `dotnet run --no-cache --file tools/create-snapshot.cs` mit dem echten Seeder; seine Daten sind auf den Erzeugungstag eingefroren |
-| `Docs/` | Kein echtes Projekt, sondern ein leeres SDK-Projekt (`Documentation.csproj`), das nur alle Markdown-/HTML-Dateien unter `Docs/` in Riders Solution Explorer sichtbar macht |
+| `RevUp/` | Blazor-Web-App (App-Icons in `RevUp/Icons/`) |
+| `RevUp.Tests/` | Unit-Tests ohne Datenbank, mit eigenen Fakes |
+| `RevUp.IntegrationTests/` | Tests gegen SQLite; jeder Test erhält eine frische Kopie von `Snapshot/revup.db` (erzeugt mit `dotnet run --no-cache --file tools/create-snapshot.cs`) |
+| `Docs/` | Leeres SDK-Projekt, das die Dokumente in Rider anzeigt |
 
-## Projektstruktur
+## Dokumente
 
-Die Docs sind durchnummeriert und über Zurück/Weiter-Links am Ende jeder Seite chronologisch verlinkt. Einstieg: [Docs/01-BACKLOG.md](Docs/01-BACKLOG.md).
+Die Dokumente sind nummeriert und oben auf jeder Seite mit Zurück/Weiter verlinkt.
 
-| # | Datei | Inhalt |
+| # | Dokument | Inhalt |
 |---|---|---|
-| 01 | `Docs/01-BACKLOG.md` | Product Backlog, User Stories, Meilensteine |
-| 02 | `Docs/02-KI-PROTOKOLL.md` | KI-Protokoll (Prompts gemäss Vorgabe LB) |
-| 03 | `Docs/03-KONZEPT.md` | Konzept-Dokument mit Risiken und offenen Fragen |
-| 04 | `Docs/Design/04-DESIGN.md` | Design-Grundlagen (Farben, Typografie, Abstände), lose Guideline |
-| 05 | `Docs/Design/05-gauge-mark.html` | Icon-Konzept-Übersicht (Grössen/Varianten) |
-| 06 | `Docs/UX/06-FALLBESCHREIBUNG.md` | Fallbeschreibung + Fragenliste |
-| 07 | `Docs/UX/07-ZIELE.md` | Nutzerziele (Veranstalter, Teilnehmer) |
-| 08 | `Docs/UX/08-PERSONAS.md` | Personas + Szenarien |
-| 09 | `Docs/UX/09-NAVIGATION.md` | Card Sorting, Navigationsstruktur |
-| 10 | `Docs/UX/10-wireframes.html` | Low-Fi-Wireframes der Hauptseiten |
-| 11 | `Docs/UX/11-PROTOTYP-TEST.md` | Selbsttest gegen die Wireframes |
-| 12 | `Docs/12-LOESUNGSDOKUMENT.md` | Lösungsdokument der LB 426: Stories, Patterns, Branches, TDD-Nachweis, SOLID, Retrospektive |
-| – | `Docs/UX/Prototype/README.md` | Hi-Fi-Prototyp: Übersicht, `prototype.html` (lokal, massgeblich) + interne Claude-Design-Arbeitsversion |
-
-`RevUp/Icons/`: finale App-Icon-SVGs (Primary, Alert, Inverted), ausserhalb der nummerierten Doc-Kette.
-
----
+| 01 | [Product Backlog](Docs/01-BACKLOG.md) | User Stories, Meilensteine, Vorgehen |
+| 02 | [KI-Protokoll](Docs/02-KI-PROTOKOLL.md) | Wichtigste Anfragen an die KI |
+| 03 | [Konzept](Docs/03-KONZEPT.md) | Ursprüngliche Idee mit Risiken und offenen Fragen |
+| 04 | [Design-Grundlagen](Docs/Design/04-DESIGN.md) | Farben, Typografie, Abstände |
+| 05 | [Icon-Konzept](Docs/Design/05-gauge-mark.html) | App-Icon in Grössen und Varianten |
+| 06 | [Fallbeschreibung](Docs/UX/06-FALLBESCHREIBUNG.md) | Ausgangslage und Fragenliste |
+| 07 | [Ziele](Docs/UX/07-ZIELE.md) | Nutzerziele von Veranstalter und Teilnehmer |
+| 08 | [Personas](Docs/UX/08-PERSONAS.md) | Personas und Szenarien |
+| 09 | [Navigation](Docs/UX/09-NAVIGATION.md) | Card Sorting und Navigationsstruktur |
+| 10 | [Wireframes](Docs/UX/10-wireframes.html) | Low-Fi-Wireframes der Hauptseiten |
+| 11 | [Prototyp-Test](Docs/UX/11-PROTOTYP-TEST.md) | Selbsttest gegen die Wireframes |
+| 12 | [Lösungsdokument](Docs/12-LOESUNGSDOKUMENT.md) | Stories, Patterns, Branches, TDD-Nachweis, SOLID, Retrospektive |
+| – | [Prototyp](Docs/UX/Prototype/README.md) | Klickbarer Hi-Fi-Prototyp |
 
 **Weiter →** [01 · Product Backlog](Docs/01-BACKLOG.md)

@@ -1,25 +1,21 @@
 # Prototyp
 
-*Letztes Dokument der Kette · [← 11 Prototyp-Test](../11-PROTOTYP-TEST.md) · [↑ Zurück zum Start](../../../README.md)*
+*Zu Dokument 11 · [← 11 Prototyp-Test](../11-PROTOTYP-TEST.md) · Weiter: [12 Lösungsdokument →](../../12-LOESUNGSDOKUMENT.md)*
 
-Hi-Fi-Prototyp der 4 Hauptscreens, aufbauend auf [`10-wireframes.html`](../10-wireframes.html) und den Tokens aus [`04-DESIGN.md`](../../Design/04-DESIGN.md).
+Hi-Fi-Prototyp der 4 Hauptscreens auf Basis der [Wireframes](../10-wireframes.html) und der [Design-Grundlagen](../../Design/04-DESIGN.md).
 
-## Primäre Version: `prototype.html`
+**[prototype.html](prototype.html)** ist der massgebliche Prototyp: reines HTML, CSS und JavaScript, läuft lokal im Browser (Datei direkt öffnen). Alle 4 Screens sind klickbar:
 
-**[`prototype.html`](prototype.html)** ist der massgebliche, eigenständige Prototyp: reines HTML/CSS/JS, keine Abhängigkeiten ausser Google Fonts, läuft lokal im Browser (Datei direkt öffnen). Alle 4 Screens sind klickbar:
+- **Entdecken:** Der Themen-Filter filtert die Liste live, mit Leerzustand.
+- **Erstellen:** Zeitmodus und Sichtbarkeit als Umschalter, Stepper für Teilnehmer und Lautstärke.
+- **Meet-Detail:** «Beitreten» (öffentlich) bzw. «Anfrage stellen» (privat) ändert Status und Button live.
+- **Meine Meets:** Annehmen/Ablehnen aktualisiert Zeile und Zähler live.
 
-- **Entdecken**: Themen-Filter filtert die Liste live, Leerzustand bei 0 Treffern.
-- **Erstellen**: Zeitmodus/Sichtbarkeit als Segmented Control, Teilnehmer-/Lautstärke-Stepper.
-- **Meet-Detail**: "Beitreten" (öffentlich) bzw. "Anfrage stellen" (privat) ändert Status-Pill und Button live. Umschalter oben im Screen wechselt zwischen den beiden Beispielen.
-- **Meine Meets**: Annehmen/Ablehnen pro Anfrage aktualisiert Zeile und offene-Anfragen-Zähler live.
+Die `.dc.html`-Dateien und `canvas.json` sind die Arbeitsdateien aus Claude Design.
 
-## Interne Version: Claude Design
+## Design-Entscheidungen
 
-Dieselben 4 Screens existieren zusätzlich als Claude-Design-Canvas (`.dc.html`-Quellen in diesem Ordner: `Main.dc.html`, `Erstellen.dc.html`, `Detail.dc.html`, `MeineMeets.dc.html`, `canvas.json`). Das ist reine interne Arbeitsversion für visuelles Iterieren (WYSIWYG-Editor), **nicht geteilt, kein öffentlicher Link**. Die massgebliche, referenzierbare Version für die Doku ist `prototype.html` oben.
-
-## Design-Entscheidungen gegenüber 04-DESIGN.md
-
-- Typografie: Big Shoulders Display (Headlines), Manrope (UI/Body), IBM Plex Mono (Meta/Daten) durchgängig übernommen.
-- Layout-Muster an Apple HIG angelehnt (plattformunabhängig, nicht iOS-spezifisch): Large-Title-Header, Segmented Controls, Tab-Bar, Inset-Grouped-Formularfelder, Stepper. Kein Fake-Statusbar/-Keyboard.
-- Tap-Ziele durchgängig auf mind. 44×44px (Stepper, Zurück-Button, Annehmen/Ablehnen, Themen-Chips, Segmented-Control-Optionen).
-- Akzentfarbe (Mint) bewusst nur für Interaktives reserviert (Buttons, aktive Zustände). Der "Öffentlich"-Badge nutzt stattdessen Info-Blau (`#4DA3FF`) statt Mint, um Marken-Akzent und Kategorie-Label sauber zu trennen. Siehe `04-DESIGN.md`, Abschnitt "Interaktion & Zustände".
+- Schriften: Big Shoulders Display (Titel), Manrope (Oberfläche), IBM Plex Mono (Metadaten).
+- Layout nach den Human Interface Guidelines, aber plattformunabhängig: grosse Titel, Umschalter, Tab-Bar, gruppierte Formularfelder, Stepper.
+- Tap-Ziele mindestens 44 × 44 px.
+- Mint nur für Interaktives; das «Öffentlich»-Badge nutzt Info-Blau (`#4DA3FF`), damit Akzent und Kategorie-Label getrennt bleiben.

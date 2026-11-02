@@ -9,18 +9,18 @@
 | Projekt | RevUp, Web-App zur Organisation von Car- und Bike-Meets (eigene Idee, Einzelarbeit, von der Lehrperson freigegeben) |
 | Repository | https://github.com/Tojioo/RevUp (privat, Lehrperson hat Zugriff) |
 | Board | https://github.com/users/Tojioo/projects/2/views/1 |
-| Abgabe | Ordner und ZIP `StadelmannLB-426` |
+| Abgabe | Ordner und ZIP `StadelmannLB-426`, Abgabetermin 02.11.2026 (mit der Lehrperson vereinbart) |
 
 ## 0 Administratives (Aufgabe 0-1)
 
-- Einzelarbeit statt Partnerarbeit und GitHub statt GitLab der BBB sind mit der Lehrperson abgesprochen. Die Bewertung erfolgt wie bei einem Teamprojekt.
-- Programmiersprache C# (.NET 10, ASP.NET Core Blazor), Tests mit xUnit, CI mit GitHub Actions.
-- Gemergt wird nur mit Merge Commits; Squash und Rebase sind im Repository ausgeschaltet, Quellbranches werden nicht gelöscht. So bleiben die Test-Commits jeder Story sichtbar (entspricht der GitLab-Vorgabe «Delete source branch» aus).
-- Alle schriftlichen Ergebnisse stehen in diesem Dokument; die übrigen Dokumente unter `Docs/` sind verlinkt.
+- Einzelarbeit statt Partnerarbeit und GitHub statt GitLab der BBB sind mit der Lehrperson abgesprochen; bewertet wird wie ein Teamprojekt.
+- C# mit .NET 10 und ASP.NET Core Blazor, Tests mit xUnit, CI mit GitHub Actions.
+- Gemergt wird nur mit Merge Commits (Squash und Rebase ausgeschaltet), Branches werden nicht gelöscht. So bleiben die Test-Commits jeder Story sichtbar.
+- Alle schriftlichen Ergebnisse stehen in diesem Dokument; weitere Dokumente unter `Docs/` sind verlinkt.
 
 ## 1 User Stories (Aufgaben 1-1, 1-2)
 
-Alle Stories folgen dem Muster «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutzen>», haben eine eindeutige ID (`US-xx`) und prüfbare Akzeptanzkriterien. Der vollständige Product Backlog mit Akzeptanzkriterien steht in [01-BACKLOG.md](01-BACKLOG.md), jede Story ist zusätzlich ein GitHub-Issue.
+Jede Story hat das Format «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutzen>», eine eindeutige ID und prüfbare Akzeptanzkriterien. Alle Kriterien stehen im [Product Backlog](01-BACKLOG.md), jede Story ist ein GitHub-Issue.
 
 | ID    | User Story (Kurzform)                                                              | Status        |
 |-------|------------------------------------------------------------------------------------|---------------|
@@ -34,17 +34,17 @@ Alle Stories folgen dem Muster «Als \<Rolle> möchte ich \<Ziel>, damit \<Nutze
 | US-08 | Als Veranstalter möchte ich ein Zeitmodell wählen (Fixed / Open Start / Open End), damit klar ist, wann das Meet stattfindet. | umgesetzt |
 | US-09 | Als Veranstalter möchte ich mein Meet bearbeiten oder absagen, damit ich auf Änderungen reagieren kann. | umgesetzt |
 | US-10 | Als Teilnehmer möchte ich sehen, wie viele Plätze noch frei sind, damit ich weiss, ob sich eine Anfrage lohnt. | umgesetzt |
-| US-11, US-12, US-17 – US-19 | «Meine Meets», «Meine Anfragen», Konten | bewusst nach der LB (siehe Retrospektive) |
+| US-11, US-12, US-17 – US-19 | «Meine Meets», «Meine Anfragen», Konten | Meilenstein «Nach der LB» |
 
-Zusätzlich gab es drei technische Aufgaben ohne neue Funktion für Nutzer: T-01 (Icons), T-02 (Persistenz mit linq2db und SQLite), T-03 (Trennung von Unit- und Integrationstests).
+Dazu kamen drei technische Aufgaben: T-01 (Icons), T-02 (Persistenz mit linq2db und SQLite), T-03 (Unit- und Integrationstests getrennt).
 
 ## 2 Design Patterns (Aufgabe 2-1)
 
 ### 2.1 Observer (vorgegeben)
 
-**Problem:** Mehrere Personen haben dieselben Daten gleichzeitig offen. Der Veranstalter wartet auf der Seite «Anfragen» auf neue Anfragen, die anfragende Person auf der Detailseite auf den Entscheid, und in «Entdecken» sollen die freien Plätze stimmen (US-10: «live aktualisiert»). Ohne Pattern müsste der `MeetService` jede Seite kennen, oder jede Seite müsste ständig neu laden.
+**Problem:** Mehrere Personen sehen dasselbe Meet gleichzeitig. Der Veranstalter wartet auf Anfragen, die anfragende Person auf den Entscheid, und in «Entdecken» sollen die freien Plätze stimmen (US-10). Ohne Pattern müsste der `MeetService` jede Seite kennen, oder jede Seite müsste ständig neu laden.
 
-**Lösung:** Der `MeetService` meldet jede Änderung an einem Meet einem Subjekt. Seiten, die sich dafür interessieren, melden sich als Beobachter an und laden sich bei einer Meldung neu. Sender und Empfänger kennen sich nicht.
+**Lösung:** Der `MeetService` meldet jede Änderung einem Subjekt. Seiten melden sich als Beobachter an und laden bei einer Meldung neu. Sender und Empfänger kennen sich nicht.
 
 | Rolle im Pattern     | Klasse im Code                                                |
 |----------------------|---------------------------------------------------------------|
@@ -89,18 +89,15 @@ classDiagram
     MeetService --> MeetChangeNotifier : meldet Änderungen
 ```
 
-Details der Umsetzung:
-
-- Jede Seite meldet sich in `OnInitializedAsync` an und in `Dispose` ab. So bekommt eine geschlossene Seite keine Meldungen mehr.
-- `NotifyAsync` arbeitet auf einer Kopie der Beobachterliste, weil sich ein Beobachter während der Benachrichtigung abmelden kann.
-- Der `MeetService` meldet erst, nachdem er seine Sperre freigegeben hat. Die Detailseite ruft bei einer Meldung den Service wieder auf (um zu sehen, ob ihre Anfrage angenommen wurde); innerhalb der Sperre würde das blockieren.
-- Getestet in `MeetChangeNotifierTests` (anmelden, abmelden, doppelt anmelden, mehrere Beobachter) und `MeetDecisionTests` (jede Änderung wird gemeldet, ohne Änderung keine Meldung).
+- Seiten melden sich in `OnInitializedAsync` an und in `Dispose` ab. `NotifyAsync` arbeitet auf einer Kopie der Liste, weil sich ein Beobachter währenddessen abmelden kann.
+- Der Service meldet erst nach dem Freigeben seiner Sperre, weil die Detailseite bei einer Meldung den Service wieder aufruft.
+- Tests: `MeetChangeNotifierTests` und `MeetDecisionTests`.
 
 ### 2.2 Strategy (zweites Pattern)
 
-**Problem:** Öffentliche und private Meets unterscheiden sich darin, wie man beitritt und wann der Standort sichtbar wird: öffentlich sofort, privat erst nach Freigabe. Ohne Pattern stünden dieselben `if (meet.IsPublic)`-Abfragen in Liste, Detailseite und Service, und jede neue Regel (z. B. «nur auf Einladung») müsste an allen Stellen nachgezogen werden.
+**Problem:** Öffentliche und private Meets unterscheiden sich beim Beitritt: öffentlich sofort mit Ort, privat erst nach Freigabe. Ohne Pattern stünden dieselben `if (meet.IsPublic)`-Abfragen in Liste, Detailseite und Service, und jede neue Regel (z. B. «nur auf Einladung») müsste überall nachgezogen werden.
 
-**Lösung:** Jede Sichtbarkeit ist eine eigene Strategie mit derselben Schnittstelle. Der Service fragt nur `JoinPolicies.For(meet)` nach der passenden Strategie und ruft sie auf; Liste und Detailseite holen Beschriftung und Ortshinweis ebenfalls von dort.
+**Lösung:** Jede Sichtbarkeit ist eine Strategie mit derselben Schnittstelle. Service, Liste und Detailseite holen sie über `JoinPolicies.For(meet)`.
 
 | Rolle im Pattern     | Klasse im Code                                   |
 |----------------------|--------------------------------------------------|
@@ -133,15 +130,19 @@ classDiagram
     MeetService ..> JoinPolicies : fragt
 ```
 
-Getestet in `JoinPolicyTests`: Beitritt bei öffentlichen Meets mit Ort, volles Meet, doppelter Name, privates Meet gibt den Ort nie heraus.
+Tests: `JoinPolicyTests` (Beitritt mit Ort, volles Meet, doppelter Name, privates Meet nie mit Ort).
 
 ## 3 Umsetzung (Aufgaben 3-1 bis 3-7)
 
-### 3.1 Aufteilung und eigener Branch (3-2)
+### 3.1 Anforderungen und Patterns (3-1, 3-5, 3-6)
 
-Einzelarbeit: Alle Branches und Commits stammen von mir. Die Arbeit ist nach User Stories aufgeteilt, jede Story hat einen eigenen Branch, der per Pull Request in `main` gemergt wird. Die Lehrperson bewertet wie ein Teamprojekt.
+US-01 bis US-10 sind umgesetzt (Abschnitt 1), Observer und Strategy wie in Abschnitt 2 eingesetzt.
 
-### 3.2 Feature-Branches (3-3)
+### 3.2 Aufteilung und eigener Branch (3-2)
+
+Einzelarbeit: Die Arbeit ist nach Stories aufgeteilt. Jede Story hat einen eigenen Branch, der per Pull Request in `main` gemergt wird.
+
+### 3.3 Feature-Branches (3-3)
 
 Jeder Branch enthält die ID der Story und wurde in `main` zurückgemergt.
 
@@ -160,9 +161,9 @@ Jeder Branch enthält die ID der Story und wurde in `main` zurückgemergt.
 | `US-08-zeitmodell` | US-08 | Zeitmodus Fixed / Open Start / Open End, Darstellung in Liste und Detail | #29 |
 | `US-09-bearbeiten-absagen` | US-09 | Bearbeiten, Absagen mit Bestätigung, gemeinsames Formular, Datenbank-Upgrade | #30 |
 
-### 3.3 TDD (3-4)
+### 3.4 TDD (3-4)
 
-Bei jeder Story wurde zuerst ein Test-Commit gepusht, der in der CI fehlschlägt (rot); erst danach folgte die Implementierung (grün). Die CI-Läufe sind in GitHub Actions für alle mit Zugriff auf das Repository einsehbar.
+Pro Story zuerst ein Test-Commit, der in der CI fehlschlägt (rot), danach die Umsetzung (grün):
 
 | Story | Test-Commit (rot) | Implementierung (grün) |
 |---|---|---|
@@ -178,47 +179,64 @@ Bei jeder Story wurde zuerst ein Test-Commit gepusht, der in der CI fehlschlägt
 | US-08 | [2f79d70](https://github.com/Tojioo/RevUp/commit/2f79d70) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928780023) | [c9a676d](https://github.com/Tojioo/RevUp/commit/c9a676d) · [CI](https://github.com/Tojioo/RevUp/actions/runs/40928933742) |
 | US-09 | [b2a9453](https://github.com/Tojioo/RevUp/commit/b2a9453) · [CI](https://github.com/Tojioo/RevUp/actions/runs/41017333570) | [f9bbb2a](https://github.com/Tojioo/RevUp/commit/f9bbb2a) · [CI](https://github.com/Tojioo/RevUp/actions/runs/41017525641) |
 
-Testaufbau: `RevUp.Tests` (Unit-Tests ohne I/O, mit eigenen Fakes wie `FakeMeetRepository`) und `RevUp.IntegrationTests` (gegen SQLite; jeder Test erhält eine frische Kopie einer eingecheckten Snapshot-Datenbank). Stand bei Abgabe: 84 Unit-Tests und 9 Integrationstests, alle grün.
+`RevUp.Tests` enthält 84 Unit-Tests ohne I/O (mit eigenen Fakes), `RevUp.IntegrationTests` 9 Tests gegen SQLite, jeder mit einer frischen Kopie einer Snapshot-Datenbank. Alle sind grün.
 
-### 3.4 Coding Conventions und Code Smells (3-7)
+### 3.5 Coding Conventions und Code Smells (3-7)
 
-- Regeln in `.editorconfig` (Benennung, Klammern, Leerzeilen, Reihenfolge) und StyleCop-Analyse in jedem Projekt (`Directory.Build.props`). Der Build läuft ohne Warnungen, die CI prüft das bei jedem Push.
-- Zusätzlich wurden die Inspections von Rider bereinigt (z. B. Initializer-Umbrüche, überflüssige Null-Prüfung).
-- Kommentare nur, wo das «Warum» nicht aus dem Code hervorgeht (z. B. warum der Service erst nach dem Freigeben der Sperre meldet).
-- Doppelter Code wurde zusammengefasst, z. B. gemeinsame Styles in `app.css`, Beispieldaten an einer Stelle (`MeetSeeder`) und ein gemeinsames Formular (`MeetForm`, `ServerValidation`) für «Erstellen» und «Bearbeiten».
+- `.editorconfig` und StyleCop in jedem Projekt; der Build läuft ohne Warnungen, die CI prüft das bei jedem Push. Zusätzlich sind die Rider-Inspektionen bereinigt.
+- Kommentare nur für das «Warum», z. B. warum der Service erst nach dem Freigeben der Sperre meldet.
+- Doppelter Code ist zusammengefasst, z. B. ein gemeinsames Formular (`MeetForm`) für Erstellen und Bearbeiten und die Beispieldaten nur im `MeetSeeder`.
 
 ## 4 SOLID-Beurteilung (Aufgabe 4-1)
 
 | Prinzip | Beurteilung mit Beispiel aus dem Code | Verletzung und Verbesserung |
 |---|---|---|
-| **S** Single Responsibility | Erfüllt bei den meisten Klassen: `MeetDraftValidator` prüft nur Eingaben, `MeetRepository` greift nur auf die Datenbank zu, `MeetChangeNotifier` verteilt nur Meldungen, `MeetTimeWindow` formatiert nur Zeiten. | **Teilweise verletzt:** `MeetService` liest Listen und Details, steuert Beitritte, Anfragen und Entscheide und hält die Sperre. Verbesserung: aufteilen in `MeetQueryService` (lesen), `JoinService` (Beitritt und Anfragen) und `MeetCreationService`. |
-| **O** Open/Closed | Erfüllt für neue Beitrittsregeln: Eine weitere Strategie (z. B. «nur auf Einladung») ist eine neue Klasse, die `IJoinPolicy` umsetzt; `MeetService`, Liste und Detailseite bleiben unverändert. Neue Beobachter kommen ohne Änderung am Subjekt dazu. | **Teilweise verletzt:** `JoinPolicies.For` wählt über `meet.IsPublic` (ein `bool`). Für eine dritte Sichtbarkeit müssten Modell und Auswahl geändert werden. Verbesserung: `Visibility` als Enum und eine Zuordnung Enum → Strategie. |
-| **L** Liskov Substitution | Erfüllt: `PublicJoinPolicy` und `PrivateJoinPolicy` sind überall austauschbar, wo `IJoinPolicy` erwartet wird. Die Fakes (`FakeMeetRepository`, `FakeJoinRequestRepository`) ersetzen die echten Repositories in den Tests, ohne dass sich das Verhalten des Service ändert. | Keine Verletzung gefunden. |
-| **I** Interface Segregation | Erfüllt bei `IMeetSubject` (Anmelden) und `IMeetObserver` (Benachrichtigt werden), die bewusst getrennt sind; die Seiten kennen nur `IMeetSubject`, nicht `NotifyAsync`. Repositories haben kleine Schnittstellen. | **Teilweise verletzt:** `IMeetService` ist breit, jede Seite nutzt nur einen Teil (die Liste braucht z. B. keine Entscheide). Verbesserung: getrennte Schnittstellen pro Aufgabe, passend zur Aufteilung bei S. |
-| **D** Dependency Inversion | Erfüllt: `MeetService` hängt von `IMeetRepository`, `IJoinRequestRepository` und `TimeProvider` ab, nicht von SQLite oder der Uhr; die Seiten hängen von `IMeetService` und `IMeetSubject` ab. Darum sind die Unit-Tests ohne Datenbank möglich. | **Teilweise verletzt:** `MeetService` nutzt den konkreten `MeetChangeNotifier` (für `NotifyAsync`) und die statischen Klassen `JoinPolicies` und `MeetDraftValidator`. Verbesserung: Schnittstelle `IMeetChangePublisher` für das Melden und die Strategie-Auswahl als injizierbaren Dienst. |
+| **S** Single Responsibility | Erfüllt bei den meisten Klassen: `MeetDraftValidator` prüft nur Eingaben, `MeetRepository` greift nur auf die Datenbank zu, `MeetChangeNotifier` verteilt nur Meldungen. | **Teilweise verletzt:** `MeetService` liest, steuert Beitritte und Anfragen und bearbeitet und sagt ab. Verbesserung: aufteilen in `MeetQueryService` (lesen), `JoinService` (Beitritt, Anfragen) und `MeetEditService` (erstellen, bearbeiten, absagen). |
+| **O** Open/Closed | Erfüllt für Beitrittsregeln: Eine neue Strategie (z. B. «nur auf Einladung») ist eine neue Klasse; Service, Liste und Detailseite bleiben unverändert. Neue Beobachter brauchen keine Änderung am Subjekt. | **Teilweise verletzt:** `JoinPolicies.For` wählt über `meet.IsPublic` (`bool`). Für eine dritte Sichtbarkeit müssten Modell und Auswahl geändert werden. Verbesserung: `Visibility` als Enum mit einer Zuordnung Enum → Strategie. |
+| **L** Liskov Substitution | Erfüllt: Beide Strategien sind überall austauschbar, wo `IJoinPolicy` erwartet wird. Die Fakes ersetzen die echten Repositories in den Tests, ohne das Verhalten des Service zu ändern. | Keine Verletzung gefunden. |
+| **I** Interface Segregation | Erfüllt bei `IMeetSubject` und `IMeetObserver`: Die Seiten kennen nur das Anmelden, nicht `NotifyAsync`. Die Repositories haben kleine Schnittstellen. | **Teilweise verletzt:** `IMeetService` ist breit, jede Seite nutzt nur einen Teil. Verbesserung: getrennte Schnittstellen passend zur Aufteilung bei S. |
+| **D** Dependency Inversion | Erfüllt: `MeetService` hängt von `IMeetRepository`, `IJoinRequestRepository` und `TimeProvider` ab, nicht von SQLite oder der Uhr. Darum laufen die Unit-Tests ohne Datenbank. | **Teilweise verletzt:** `MeetService` nutzt den konkreten `MeetChangeNotifier` und die statischen Klassen `JoinPolicies` und `MeetDraftValidator`. Verbesserung: Schnittstelle `IMeetChangePublisher` und die Strategie-Auswahl als injizierbarer Dienst. |
 
 ## 5 Sprint-Reviews
 
-**Sprint 1 (bis 29.10.):** Geplant waren US-01 bis US-06 und die technischen Aufgaben T-01 bis T-03, alles wurde umgesetzt und im Review an der laufenden App durchgespielt (Meet erstellen, Liste, öffentlich beitreten, privat anfragen, Anfragen entscheiden mit Live-Aktualisierung). Die während des Sprints neu aufgenommenen Konten (US-17 bis US-19) wurden nicht begonnen und bewusst in den Meilenstein «Nach der LB» verschoben.
+**Sprint 1 (bis 29.10.):** US-01 bis US-06 und T-01 bis T-03 umgesetzt und an der laufenden App durchgespielt. Die neu aufgenommenen Konten (US-17 bis US-19) wurden bewusst nach der LB verschoben.
 
 ![Board am Ende von Sprint 1](Sprints/sprint-1-board.png)
 
-**Sprint 2 (30.10. – 01.11.):** Geplant waren US-07 bis US-10 sowie Retrospektive, SOLID-Beurteilung und Abgabe; US-07, US-08 und US-10 wurden schon am 29.10. vorgezogen. Die Abgabe wurde wegen der Krankheit mit der Lehrperson auf den 02.11.2026 verschoben. Alle vier Stories wurden umgesetzt und im Review an der laufenden App durchgespielt (nach Thema filtern, Zeitmodus wählen, Meet bearbeiten und absagen, freie Plätze live). Beim Bearbeiten bleibt die Sichtbarkeit bewusst fix, weil sich Teilnehmende nach ihr gerichtet haben. Offen bleiben US-11, US-12 und die Konten (US-17 bis US-19) im Meilenstein «Nach der LB».
+**Sprint 2 (30.10. – 01.11.):** US-07 bis US-10 umgesetzt (US-07, US-08 und US-10 schon am 29.10. vorgezogen) und an der laufenden App durchgespielt. Beim Bearbeiten bleibt die Sichtbarkeit bewusst fix, weil sich Teilnehmende danach gerichtet haben. Offen bleiben US-11, US-12 und US-17 bis US-19.
 
 ![Board am Ende von Sprint 2 (Listenansicht der mobilen App, oben «Todo», danach «Done»)](Sprints/sprint-2-board.jpg)
 
 ## 6 Retrospektive (Aufgaben 5-1, 5-2)
 
-Vorgehen: Rückblick auf beide Sprints mit der Frage «Was hat meine Arbeitsweise gebremst?». Bewusst nicht auf das Produkt bezogen, sondern auf Planung, Praktiken und Zusammenarbeit (mit Lehrperson und KI-Werkzeugen).
+Rückblick auf beide Sprints mit der Frage «Was hat meine Arbeitsweise gebremst?», bezogen auf Planung, Praktiken und Zusammenarbeit, nicht auf das Produkt.
 
 | # | Hindernis (Impediment) | Auswirkung | Lösung (für mich umsetzbar) |
 |---|---|---|---|
-| 1 | **Krankheit vom 21. bis 27.10.** ohne Puffer in der Planung. | Rund eine Woche fiel weg; Sprint 1 und Sprint 2 rückten an den Abgabetermin, Stories mussten verschoben werden. | Bewertungsrelevantes zuerst einplanen (Observer, SOLID, Retrospektive gehörten früher in den Plan) und pro Sprint einen Puffer von etwa 20 % freihalten. Abwesenheiten sofort der Lehrperson melden. |
-| 2 | **Neue Anforderungen mitten im Sprint** (Konten, Vorgaben zu Persistenz und Testaufbau aus einer separaten Sitzung). | Der Sprint-Plan änderte sich mehrmals, Arbeit an technischen Aufgaben verdrängte Stories. | Neue Wünsche zuerst nur ins Product Backlog schreiben und erst im nächsten Sprint Planning priorisieren. Die Definition of Ready gilt auch für technische Aufgaben. |
-| 3 | **Kontextwechsel zwischen zwei Projekten** und Prüfungen, die nicht übereinstimmten: Zu Beginn wurde das Vorgehen kurz im falschen Projekt aufgesetzt, und Rider zeigte Hinweise, die die CI nicht prüft. | Zeitverlust durch Rückbau, und Hinweise fielen erst nach dem Merge auf. | Ein Projekt pro Arbeitssitzung und das Board als einzige Quelle für «Was ist dran?». Vor jedem Push dieselben Prüfungen lokal wie in der CI ausführen und die Rider-Inspektion vor dem Pull Request laufen lassen. |
+| 1 | **Eine Woche Ausfall (21.–27.10.)** ohne Puffer in der Planung. | Beide Sprints rückten an den Abgabetermin, Stories mussten verschoben werden. | Bewertungsrelevantes zuerst einplanen und pro Sprint etwa 20 % Puffer freihalten. Abwesenheiten sofort der Lehrperson melden. |
+| 2 | **Neue Anforderungen mitten im Sprint** (Konten, Vorgaben zu Persistenz und Testaufbau). | Der Plan änderte sich mehrmals, technische Aufgaben verdrängten Stories. | Neue Wünsche zuerst nur ins Product Backlog schreiben und erst im nächsten Sprint Planning priorisieren. Die Definition of Ready gilt auch für technische Aufgaben. |
+| 3 | **Kontextwechsel zwischen zwei Projekten** und uneinheitliche Prüfungen: Das Vorgehen wurde anfangs im falschen Projekt aufgesetzt, und Rider zeigte Hinweise, die die CI nicht prüft. | Zeitverlust durch Rückbau; Hinweise fielen erst nach dem Merge auf. | Ein Projekt pro Arbeitssitzung und das Board als einzige Quelle für «Was ist dran?». Vor dem Pull Request dieselben Prüfungen wie die CI und die Rider-Inspektion laufen lassen. |
 
-Erkenntnis für das weitere Vorgehen: Kleine Stories mit Test zuerst haben sich bewährt. Jede Story war in sich fertig und gemergt, darum war der Rückstand nach der Krankheit überschaubar. Das behalte ich bei.
+Erkenntnis: Kleine Stories mit Test zuerst haben sich bewährt. Weil jede Story fertig und gemergt war, blieb der Rückstand nach dem Ausfall überschaubar.
 
 ## 7 Einsatz von KI
 
-*[Wird von Nicolas ergänzt.]* Die wichtigsten Prompts sind laufend im [KI-Protokoll](02-KI-PROTOKOLL.md) festgehalten.
+### 7.1 Werkzeug und Umfang
+
+Ich habe in diesem Projekt KI in mehreren Bereichen eingesetzt. Bei neuen Features habe ich damit Ideen gesammelt und Lösungsansätze besprochen. Die in die IDE integrierte KI habe ich während der ganzen Entwicklung verwendet, so wie auch in meinem normalen Arbeitsalltag: für kurze Fragen, Refactorings, das Debuggen von Tests und teilweise auch, um Code vollständig schreiben zu lassen, wenn das schneller ging. Vor dem Committen habe ich meine Änderungen von der KI prüfen lassen, um Fehler und Unklarheiten früh zu finden.
+
+Ab Mitte Oktober hat Claude Code nach meinen Vorgaben einen grossen Teil der Umsetzung übernommen, also Code und Tests der Stories. Nach meinem einwöchigen Ausfall war das nötig, damit ich das Projekt rechtzeitig abgeben konnte. Auch dieses Lösungsdokument hat Claude Code in meinem Auftrag entworfen; diesen Abschnitt habe ich selbst geschrieben und von Claude Code auf Genauigkeit prüfen lassen.
+
+Ausserdem hat mir die KI bei der Verwaltung des Repositorys geholfen, also beim Einrichten der CI-Pipeline und beim Erstellen von Issues und Pull Requests, und mir erklärt, wie ich das Board einrichte. Bei Soloprojekten arbeite ich normalerweise nur mit einem Main- und einem Dev-Branch, und mit Stories, Pull Requests und ähnlichem kenne ich mich vor allem in Azure DevOps aus. Da mir der Ablauf auf GitHub weniger vertraut ist, habe ich diesen Teil bewusst der KI überlassen.
+
+### 7.2 Meine Rolle
+
+Die Idee, die Anforderungen und die Grundzüge der Architektur (Blazor, Persistenz mit linq2db und SQLite, Aufbau der Tests) stammen von mir. Ich habe die Entwicklung selbst gesteuert und entschieden, wann ich Code selbst schreibe und wann ich die KI einsetze. Auch bei Claude Code habe ich vorgegeben, was umgesetzt wird und in welcher Reihenfolge. Aus den Vorschlägen beim Brainstorming habe ich ausgewählt, was ich umsetze und was nicht. Welche Issues es gibt, wie sie priorisiert werden und wann etwas gemergt wird, habe ich selbst festgelegt, und das Board habe ich selbst gepflegt.
+
+### 7.3 Kontrolle
+
+Code und Vorschläge der KI habe ich nie ungeprüft übernommen. Alles, was die KI in der IDE geschrieben oder umgebaut hat, habe ich gelesen, bei Bedarf angepasst und getestet, bevor es in einen Commit kam. Die Änderungen von Claude Code kamen als Pull Requests, die ich durchgesehen und selbst gemergt habe. Die Einschätzungen zu meinen Commits habe ich als zweite Meinung genutzt, entschieden habe ich selbst. Issues und Pull Requests, welche die KI vorbereitet hat, habe ich durchgesehen und bei Bedarf korrigiert.
+
+### 7.4 Fazit
+
+Die KI war für mich ein alltägliches Werkzeug, das mir vor allem bei Routinearbeiten, beim Debuggen, bei der Umsetzung der Stories und bei der Organisation des Repositorys viel Zeit gespart hat. Beim Brainstorming und beim Prüfen der Commits war sie eine hilfreiche zweite Meinung. Nach meinem Ausfall hat mir Claude Code ermöglicht, den Abgabetermin trotzdem einzuhalten. Ihre Vorschläge passten aber nicht immer zum Projekt und mussten geprüft werden. Weil ich jede Änderung selbst kontrolliert habe, behielt ich den Überblick und die Verantwortung für den Code. Die wichtigsten Anfragen stehen im [KI-Protokoll](02-KI-PROTOKOLL.md).
